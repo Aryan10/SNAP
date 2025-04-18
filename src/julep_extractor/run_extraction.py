@@ -1,5 +1,5 @@
 import time
-from agent import client, create_task
+from agent_extractor import client, create_task
 from cleaner import clean_html
 from pathlib import Path
 import json
