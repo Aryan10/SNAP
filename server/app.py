@@ -1,14 +1,17 @@
 import os
 import jwt
+import json
+from pathlib import Path
 from datetime import datetime, timedelta
-from typing import List
-
+from typing import List,Optional
 from fastapi import FastAPI, HTTPException, Depends, Header
+from fastapi import Request
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 from passlib.context import CryptContext
 from dotenv import load_dotenv
-from app.models.user import UserModel, LoginModel, PreferencesModel
+from app.models.user import RegisterModel, LoginModel, PreferencesModel
 load_dotenv()
 
 DB_URL = os.getenv("DB_URL")
@@ -16,6 +19,7 @@ JWT_SECRET = os.getenv("JWT_SECRET")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_DAYS = 15
 
+security = HTTPBearer(auto_error=False)
 client = AsyncIOMotorClient(DB_URL)
 db = client.news_db
 users_collection = db.SNAPUsers
@@ -37,6 +41,15 @@ app.add_middleware(
 
 
 # ------------------ HELPERS ------------------
+async def get_optional_user(credentials: Optional[HTTPAuthorizationCredentials] = Depends(security)):
+    if credentials:
+        token = credentials.credentials
+        try:
+            payload = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+            return payload  # Or fetch user from DB if needed
+        except Exception:
+            return None
+    return None
 
 def create_access_token(data: dict):
     expire = datetime.utcnow() + timedelta(days=ACCESS_TOKEN_EXPIRE_DAYS)
@@ -108,3 +121,23 @@ async def update_preferences(data: PreferencesModel, current_user=Depends(get_cu
 async def get_preferences(current_user=Depends(get_current_user)):
     return {"preferences": current_user.get("preferences", [])}
 
+@app.get("/feeds")
+async def get_feeds(current_user: Optional[dict] = Depends(get_optional_user)):
+    data_dir = Path(__file__).resolve().parent.parent / "src" / "data" / "processed"
+    all_articles = []
+
+    # Read all .json files
+    for file in sorted(data_dir.glob("*.json")):
+        with open(file, "r", encoding="utf-8") as f:
+            article = json.load(f)
+            all_articles.append(article)
+
+    # If user is logged in, you can personalize here (future extension)
+    if current_user:
+        # Optional: Use current_user["preferences"] to re-sort/filter
+        pass
+
+    # Top 20 articles
+    top_articles = all_articles[:20]
+
+    return {"feeds": top_articles}
