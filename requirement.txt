@@ -1,7 +1,6 @@
-julep
-beautifulsoup4
-fake_useragent
 newsapi-python
+fake_useragent
+beautifulsoup4
 requests
 urllib3
 python-dotenv
