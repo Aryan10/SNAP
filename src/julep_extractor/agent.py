@@ -2,12 +2,8 @@ import os
 import yaml
 from dotenv import load_dotenv
 from julep import Julep
-from pathlib import Path
+from functools import lru_cache
 
-BASE_DIR = Path(__file__).resolve()
-prompts_dir = BASE_DIR.parent / "prompts"
-
-news_prompt = prompts_dir / "news_prompt.yaml"
 model = os.getenv("JULEP_MODEL", "claude-3.5-sonnet")
 
 load_dotenv()
@@ -23,7 +19,10 @@ agent = client.agents.create(
     about="Extracts structured news data from simplified HTML content."
 )
 
-with open(news_prompt, "r", encoding="utf-8") as f:
-    task_definition = yaml.safe_load(f)
+@lru_cache(maxsize=None)
+def create_task(prompt):
+    with open(prompt, "r", encoding="utf-8") as f:
+        task_definition = yaml.safe_load(f)
 
-task = client.tasks.create(agent_id=agent.id, **task_definition)
+    task = client.tasks.create(agent_id=agent.id, **task_definition)
+    return task
