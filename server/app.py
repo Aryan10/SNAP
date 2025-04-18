@@ -5,11 +5,10 @@ from typing import List
 
 from fastapi import FastAPI, HTTPException, Depends, Header
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, EmailStr
 from motor.motor_asyncio import AsyncIOMotorClient
 from passlib.context import CryptContext
 from dotenv import load_dotenv
-
+from app.models.user import UserModel, LoginModel, PreferencesModel
 load_dotenv()
 
 DB_URL = os.getenv("DB_URL")
@@ -35,18 +34,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ------------------ MODELS ------------------
-
-class RegisterModel(BaseModel):
-    email: EmailStr
-    password: str
-
-class LoginModel(BaseModel):
-    email: EmailStr
-    password: str
-
-class PreferencesModel(BaseModel):
-    preferences: List[str]
 
 
 # ------------------ HELPERS ------------------
