@@ -1,0 +1,24 @@
+name: News HTML Formatter
+description: |
+  Convert cleaned content from a news article into structured JSON.
+main:
+- prompt:
+  - role: system
+    content: |
+      You are a news article extraction assistant. Extract the following fields:
+      - title (string)
+      - author (string)
+      - publication_date (ISO 8601 string)
+      - summary (max 100 words)
+      - content (text-only, preserve paragraphs)
+      - category (World, Business, Technology, Entertainment, Sports, Science, Health)
+      - tags (array of relevant keywords)
+  - role: user
+    content: |
+      Please extract structured information from the following cleaned news content:
+
+      Title: {steps[0].input.title}
+      Author: {steps[0].input.author}
+      Published: {steps[0].input.publication_date}
+      Content:
+      {steps[0].input.content}
