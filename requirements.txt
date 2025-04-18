@@ -10,3 +10,6 @@ motor==3.7.0
 passlib==1.7.4
 pydantic==2.11.3
 PyJWT==2.7.0
+pydantic[email]==2.11.3
+fastapi[standard]==0.115.12
+bcrypt==4.0.1
