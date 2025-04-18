@@ -8,6 +8,7 @@ BASE_DIR = Path(__file__).resolve()
 prompts_dir = BASE_DIR.parent / "prompts"
 
 news_prompt = prompts_dir / "news_prompt.yaml"
+model = os.getenv("JULEP_MODEL", "claude-3.5-sonnet")
 
 load_dotenv()
 
@@ -18,7 +19,7 @@ client = Julep(
 
 agent = client.agents.create(
     name="News Formatter",
-    model="claude-3.5-sonnet",
+    model=model,
     about="Extracts structured news data from simplified HTML content."
 )
 

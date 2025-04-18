@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
 from datetime import datetime
 
-def clean_html(html_path):
+def clean_html(html_path, debug=False):
     with open(html_path, 'r', encoding='utf-8') as f:
         soup = BeautifulSoup(f, 'html.parser')
 
@@ -28,9 +28,16 @@ def clean_html(html_path):
     paragraphs = soup.find_all("p")
     content = "\n\n".join(p.get_text(strip=True) for p in paragraphs if p.get_text(strip=True))
 
+    if debug:
+        print("\nCleaned HTML:")
+        print(f"Title: {title}")
+        print(f"Author: {author}")
+        print(f"Date: {date}")
+        print(f"Content: {content}")
+
     return {
         "title": title,
         "author": author,
         "publication_date": date,
-        "content": content[:10000]  # Optional truncation
+        "content": content  # Optional truncation
     }
