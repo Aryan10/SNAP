@@ -3,6 +3,7 @@ from agent import client, create_task
 from cleaner import clean_html
 from pathlib import Path
 import json
+from hashlib import sha256
 
 BASE_DIR = Path(__file__).resolve().parent
 prompts_dir = BASE_DIR / "prompts"
@@ -25,7 +26,8 @@ def extract_news(input, prompt, source=None):
         string = json.dumps(parsed, indent=2)
 
         # Save Structured Output
-        with open(articles_dir / f"{input['title']}.json", "w", encoding="utf-8") as f:
+        hashed_title = sha256(input['title'].encode('utf-8')).hexdigest()
+        with open(articles_dir / f"{hashed_title}.json", "w", encoding="utf-8") as f:
             f.write(string)
 
         print("Structured Output:\n", string)
