@@ -98,5 +98,4 @@ if res.status == "succeeded":
     string = res.output['choices'][0]['message']['content']
     print(string)
 else:
-    logs = client.executions.get(exec_.id, logs=True).logs
-    print("❌ Execution failed. Logs:\n", logs)
+    print("Execution Failed")
