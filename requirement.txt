@@ -1,6 +1,0 @@
-newsapi-python
-fake_useragent
-beautifulsoup4
-requests
-urllib3
-python-dotenv

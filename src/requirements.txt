@@ -1,7 +1,0 @@
-julep
-beautifulsoup4
-fake_useragent
-newsapi-python
-requests
-urllib3
-python-dotenv
