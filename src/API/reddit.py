@@ -102,13 +102,14 @@ for subreddit in indian_subreddits:
 		tags = [post.link_flair_text] if post.link_flair_text else []
 		if is_news_post(post.title, tags):
 			news_post = {
-				'title': post.title,
-				'url': post.url,
-				'created_utc': post.created_utc,
-				'subreddit': post.subreddit.display_name,
-				'media': extract_media(post),
-				'content': post.selftext.strip() if post.selftext else ""
-			}
+                'title': post.title,
+                'url': post.url,
+                'created_utc': post.created_utc,
+                'subreddit': post.subreddit.display_name,
+                'media': extract_media(post),
+                'content': post.selftext.strip() if post.selftext else "",
+                'score': post.score
+            }
 			news_posts.append(news_post)
 	with open(f'api_data/reddit/{cur_date}/{subreddit}.json', 'w+') as f:
 		json.dump(news_posts, f, indent=4)
