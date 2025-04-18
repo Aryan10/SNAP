@@ -45,12 +45,4 @@ def is_news_from_reddit(json_path="reddit_test.json", prompt="is_news.yaml"):
     }
     return is_news(formatted, prompt)
 
-# if __name__ == "__main__":
-#     if len(sys.argv) != 2:
-#         print("Usage: python run_is_news.py <path_to_html_file|reddit>")
-#         sys.exit(1)
-
-#     arg = sys.argv[1]
-#     if arg.lower() == "reddit":
-#         is_news_from_reddit()
 is_news_from_reddit()
