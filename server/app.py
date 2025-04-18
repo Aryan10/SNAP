@@ -11,7 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 from passlib.context import CryptContext
 from dotenv import load_dotenv
-from app.models.user import RegisterModel, LoginModel, PreferencesModel
+from apps.models.user import RegisterModel, LoginModel, PreferencesModel
 load_dotenv()
 
 DB_URL = os.getenv("DB_URL")
