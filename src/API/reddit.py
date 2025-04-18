@@ -47,10 +47,7 @@ indian_subreddits = [
 def fetch_recent_posts(subreddit_name):
 	subreddit = reddit.subreddit(subreddit_name)
 	recent_posts = []
-	time_threshold = datetime.utcnow() - timedelta(days=1)
-	for submission in subreddit.new(limit=500):
-		post_time = datetime.utcfromtimestamp(submission.created_utc)
-		if post_time > time_threshold:
+	for submission in subreddit.top(time_filter="day"):
 			recent_posts.append(submission)
 	return recent_posts
 
