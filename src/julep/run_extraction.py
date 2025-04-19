@@ -12,6 +12,7 @@ from parser.paragraph_extractor import clean_html
 from parser.reddit_parser import reddit_parser
 from parser.rapid_news_parser import rapid_news_parser
 from parser.media_stack_parser import media_stack_parser
+from parser.gnews_parser import gnews_parser
 
 BASE_DIR = Path(__file__).resolve().parent
 prompts_dir = BASE_DIR / "prompt"
@@ -167,6 +168,17 @@ if __name__ == "__main__":
         extract_news(
             news, 
             parser=media_stack_parser, 
+            prompt="news_from_html_type1.yaml"
+        )
+
+    elif sys.argv[1] == "gnews":
+        file = test_dir / "gnews.json"
+        with open(file, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        news = data[0]
+        extract_news(
+            news, 
+            parser=gnews_parser, 
             prompt="news_from_html_type1.yaml"
         )
 
