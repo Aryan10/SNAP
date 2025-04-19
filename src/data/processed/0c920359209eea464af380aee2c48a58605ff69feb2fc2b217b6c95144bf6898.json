@@ -14,5 +14,6 @@
     "traffic incident"
   ],
   "source": "debug",
-  "popularity": 2
+  "popularity": 4,
+  "duration": 2.076
 }
