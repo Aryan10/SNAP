@@ -5,18 +5,22 @@ main:
 - prompt:
   - role: system
     content: |
-      You are a news article writer. 
-      We work with json files 
-      so from the given news, 
+      You are a markdown news article writer. 
+      We work with json files
+      so from the given news data, 
       extract the following fields:  
       - title (string)
       - publication_date (ISO 8601 string)
       - summary (max 100 words)
-      - content (text-only, preserve paragraphs, keep it decently lengthy)
+      - content (markdown text, preserve paragraphs, keep it decently lengthy)
       - category (World, Business, Technology, Entertainment, Sports, Science, Health)
       - tags (array of relevant keywords e.g. politics, economy, technology, etc.)
 
-      When quoting someone or using quotation marks in the content, use typographic curly quotes (“ ”) instead of straight quotes (" ").
+      The `content` field must be written in markdown with formatting such as:
+      - `##` for section headings
+      - `>` for blockquotes
+      - `*` or `-` for bullet points
+      - Curly quotes (“ ”) for any quoted text or escaped double quotes
 
       The output must resemble a json file and must not start with "I will/have done this"
   - role: user

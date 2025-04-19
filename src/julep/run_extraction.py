@@ -5,10 +5,11 @@ from pathlib import Path
 from hashlib import sha256
 
 from agent.extractor import client, create_task
-from cleaner.paragraph_extractor import clean_html
+from agent.formatter import create_formatting_task
+from parser.paragraph_extractor import clean_html
+from parser.api_parser import reddit_parser
 from pathlib import Path
 from is_news import is_news
-from api_parser import reddit_parser
 
 BASE_DIR = Path(__file__).resolve().parent
 prompts_dir = BASE_DIR / "prompt"
@@ -33,6 +34,14 @@ def _extract_news(input, prompt, source=None):
         try:
             parsed = json.loads(string)
             parsed["source"] = source
+
+            # Format content
+            formatted_content = format_news(parsed["content"])
+            if formatted_content is None:
+                print("Failed to format content")
+                return None
+            parsed["content"] = formatted_content
+
             string = json.dumps(parsed, indent=2)
         except Exception as e:
             print("Error parsing JSON")
@@ -47,25 +56,57 @@ def _extract_news(input, prompt, source=None):
             f.write(string)
 
         print("Structured Output:\n", string)
+        return parsed
+    else:
+        print("Execution Failed")
+        return None
+
+def format_news(content, prompt="markdown_formatter.yaml"):
+    task = create_formatting_task(prompts_dir / prompt)
+    exec_ = client.executions.create(task_id=task.id, input={
+        "content": content
+    })
+
+    print(f"Executing formatting task for: {content}")
+    while (res := client.executions.get(exec_.id)).status not in ["succeeded", "failed"]:
+        print("Status:", res.status)
+        time.sleep(1)
+
+    if res.status == "succeeded":
+        string = res.output['choices'][0]['message']['content']
+        print("Formatted Output:\n", string)
         return string
     else:
         print("Execution Failed")
         return None
 
-def extract_news(obj, parser, prompt, source=None):
-    formatted = parser(obj)
+def extract_news(obj, parser, prompt):
+    # Convert input to JSON
+    formatted, source = parser(obj)
+    if formatted is None:
+        return None
+    
     news = is_news(formatted)
-    if news is not None:
-        if news:
-            return _extract_news(formatted, prompt=prompt, source=source or obj)
-        else:
-            print("\nNot a news post!")
-            return None
+    if news is None:
+        return None
+
+    if not news:
+        print("\nNot a news post!")
+        return None
+    
+    article = _extract_news(formatted, prompt=prompt, source=source or obj)
+    return article
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
         print("Usage: python run_extraction.py <path_to_html_file>")
+
     elif sys.argv[1] == "reddit":
-        extract_news("debug", parser=reddit_parser, prompt="news_from_reddit_post.yaml")
+        file = BASE_DIR / "reddit_test.json"
+        with open(file, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        post = data[-2]
+        extract_news(post, parser=reddit_parser, prompt="news_from_reddit_post.yaml")
+
     else:
         extract_news(sys.argv[1], parser=clean_html, prompt="news_from_html_type1.yaml")

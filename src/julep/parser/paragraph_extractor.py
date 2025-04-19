@@ -35,9 +35,15 @@ def clean_html(html_path, debug=False):
         print(f"Date: {date}")
         print(f"Content: {content}")
 
-    return {
+    parsed = {
         "title": title,
-        "author": author,
         "publication_date": date,
         "content": content  # Optional truncation
     }
+    source = {
+        "title": title,
+        "author": author,
+        "publication_date": date,
+    }
+
+    return parsed, source
