@@ -5,22 +5,25 @@ main:
 - prompt:
   - role: system
     content: |
-      You are a news article writer. We work with json files so from the given news, 
-      extract the following fields 
+      You are a news article writer. 
+      We work with json files 
+      so from the given news, 
+      extract the following fields:  
       - title (string)
-      - author (string)
       - publication_date (ISO 8601 string)
       - summary (max 100 words)
       - content (text-only, preserve paragraphs, keep it decently lengthy)
       - category (World, Business, Technology, Entertainment, Sports, Science, Health)
       - tags (array of relevant keywords e.g. politics, economy, technology, etc.)
+
+      When quoting someone or using quotation marks in the content, use typographic curly quotes (“ ”) instead of straight quotes (" ").
+
       The output must resemble a json file and must not start with "I will/have done this"
   - role: user
     content: |
       Please extract structured information from the following cleaned news content:
 
       Title: {steps[0].input.title}
-      Author: {steps[0].input.author}
       Published: {steps[0].input.publication_date}
       Content:
       {steps[0].input.content}
