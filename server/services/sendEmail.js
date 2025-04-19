@@ -36,36 +36,51 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-const generateArticlesHTML = (articles) => {
-  return articles
-    .map((article) => {
-      return `
-        <div style="margin-bottom: 30px; padding: 10px; border-bottom: 1px solid #ccc;">
-          <h2 style="margin: 0 0 10px;">${article.title}</h2>
-          ${
-            article.image
-              ? `<img src="${article.image}" alt="" style="max-width:100%; height:auto; margin-bottom:10px;" />`
-              : ""
-          }
-          <p>${article.description || ""}</p>
-          <a href="${article.url}" target="_blank">Read more</a>
-        </div>
-      `;
-    })
-    .join("\n");
-};
+// const generateArticlesHTML = (articles) => {
+//   return articles
+//     .map((article) => {
+//       return `
+//         <div style="margin-bottom: 30px; padding: 10px; border-bottom: 1px solid #ccc;">
+//           <h2 style="margin: 0 0 10px;">${article.title}</h2>
+//           ${
+//             article.image
+//               ? `<img src="${article.image}" alt="" style="max-width:100%; height:auto; margin-bottom:10px;" />`
+//               : ""
+//           }
+//           <p>${article.description || ""}</p>
+//           <a href="${article.url}" target="_blank">Read more</a>
+//         </div>
+//       `;
+//     })
+//     .join("\n");
+// };
 
-const sendNewsLetterEmail = async (recipientEmail, data) => {
+
+
+const sendNewsLetterEmail = async (recipientEmail, jwtToken) => {
   try {
-    const htmlContent = await loadTemplate("./templates/newsletter.html", {
-      articles: generateArticlesHTML(data.articles),
-      totalArticles: data.totalArticles,
-    });
+    var data = null;
+    try {
+      const res = await fetch("http://localhost:8000/feeds", {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      data = (await res.json()).feeds;
+    } catch (e){
+      console.log("Error sending email");
+      return;
+    }
+    if (data === null){
+      console.log("Error sending email");
+      return;
+    }
+    const htmlContent = generateNewsEmailHTML(data);
 
     const mailOptions = {
       from: process.env.EMAIL,
       to: recipientEmail,
-      subject: `📰 Your Daily Newsletter - ${data.totalArticles} Stories`,
+      subject: `📰 Your Daily Newsletter`,
       html: htmlContent,
     };
 
