@@ -3,6 +3,7 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { useEffect, useState, useRef } from "react";
 
 interface NewsItem {
@@ -212,7 +213,9 @@ export default function NewsDetailPage() {
             </div>
           )}
           <div className="prose dark:prose-invert max-w-none">
-            <ReactMarkdown>{newsItem.content}</ReactMarkdown>
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+              {newsItem.content.replace(/\\n/g, "\n")}
+            </ReactMarkdown>
           </div>
           {newsItem.source?.url && (
             <p className="mt-4 text-sm text-muted-foreground">
