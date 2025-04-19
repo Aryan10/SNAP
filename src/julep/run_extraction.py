@@ -6,13 +6,12 @@ from hashlib import sha256
 
 from agent.extractor import client, create_task
 from agent.formatter import create_formatting_task
+from agent.classifier import create_classifier_task
 
 from parser.paragraph_extractor import clean_html
 from parser.reddit_parser import reddit_parser
 from parser.rapid_news_parser import rapid_news_parser
 from parser.media_stack_parser import media_stack_parser
-
-from is_news import is_news
 
 BASE_DIR = Path(__file__).resolve().parent
 prompts_dir = BASE_DIR / "prompt"
@@ -65,6 +64,33 @@ def _extract_news(input, prompt, source=None):
         print("Execution Failed")
         return None
 
+
+def _is_news(input, prompt="is_news.yaml") -> bool | None:
+    task = create_classifier_task(prompts_dir / prompt)
+    exec_ = client.executions.create(task_id=task.id, input=input)
+
+    print(f"Executing is_news task for: {input['title']}")
+    while True:
+        res = client.executions.get(exec_.id)
+        if res.status in ("succeeded", "failed"):
+            break
+        print("Status:", res.status)
+        time.sleep(1)
+
+    if res.status == "succeeded":
+        result = res.output['choices'][0]['message']['content']
+        print("Classifier Output (news or not?):\n", result)
+
+        # trim and to lower case
+        result = result.strip().lower()
+        if result not in ["true", "false"]:
+            print("Invalid output")
+            return None
+        return True if result == "true" else False
+    else:
+        print("Execution Failed")
+        return None
+
 def _format_news(content, prompt="markdown_formatter.yaml"):
     task = create_formatting_task(prompts_dir / prompt)
     exec_ = client.executions.create(task_id=task.id, input={
@@ -91,15 +117,17 @@ def extract_news(obj, parser, prompt, assured_news=True):
     if formatted is None:
         return None
     
+    # Check if news or not
     if not assured_news:
-        news = is_news(formatted)
-        if news is None:
+        is_news = _is_news(formatted)
+        if is_news is None:
             return None
 
-        if not news:
+        if not is_news:
             print("\nNot a news post!")
             return None
     
+    # Generate article
     article = _extract_news(formatted, prompt=prompt, source=source or obj)
     return article
 
