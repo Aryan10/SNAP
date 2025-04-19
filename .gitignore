@@ -4,7 +4,7 @@ notebooks
 __pycache__/
 *.py[cod]
 *$py.class
-
+/node_modules
 *.env
 venv
 .cph

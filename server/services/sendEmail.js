@@ -1,6 +1,6 @@
-const fs = require("fs");
 const nodemailer = require("nodemailer");
-const path = require("path");
+const generateNewsEmailHTML = require("./generateEmail.js");
+require('dotenv').config();
 
 // Load HTML template and replace placeholders
 async function loadTemplate(filePath, replacements) {
@@ -35,7 +35,6 @@ const transporter = nodemailer.createTransport({
     rejectUnauthorized: false,
   },
 });
-
 // const generateArticlesHTML = (articles) => {
 //   return articles
 //     .map((article) => {
