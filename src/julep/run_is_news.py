@@ -1,9 +1,9 @@
 import time
 import json
 from pathlib import Path
-from agent_is_news import client
-from agent_is_news import create_is_news_task as create_task
-from cleaner import clean_html
+from agent.is_news import client
+from agent.is_news import create_is_news_task as create_task
+from cleaner.paragraph_extractor import clean_html
 import sys
 
 BASE_DIR = Path(__file__).resolve()

@@ -1,12 +1,12 @@
 import time
-from agent_extractor import client, create_task
-from cleaner import clean_html
+from agent.extractor import client, create_task
+from cleaner.paragraph_extractor import clean_html
 from pathlib import Path
 import json
 from hashlib import sha256
 
 BASE_DIR = Path(__file__).resolve().parent
-prompts_dir = BASE_DIR / "prompts"
+prompts_dir = BASE_DIR / "prompt"
 articles_dir = BASE_DIR.parent / "data" / "processed"
 
 # Cleaned Input Format: { title, author, publication_date, content }
@@ -41,7 +41,7 @@ def extract_news_from_html(html_path, prompt="news_from_html_type1.yaml"):
     extract_news(input, prompt)
 
 def extract_news_from_reddit():
-    file = "reddit_test.json"
+    file = BASE_DIR / "reddit_test.json"
     with open(file, "r", encoding="utf-8") as f:
         data = json.load(f)
     formatted = {}
