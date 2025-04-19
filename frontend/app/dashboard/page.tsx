@@ -11,7 +11,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Newspaper, Settings, LogOut, MessageCircle, X, Send } from "lucide-react";
+import {
+  Newspaper,
+  Settings,
+  LogOut,
+  MessageCircle,
+  X,
+  Send,
+} from "lucide-react";
 
 interface NewsItem {
   title: string;
@@ -149,7 +156,7 @@ export default function DashboardPage() {
 
   const sendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!inputMessage.trim()) return;
 
     const token = localStorage.getItem("SNAPtoken");
@@ -159,10 +166,10 @@ export default function DashboardPage() {
     const userMessage: ChatMessage = {
       text: inputMessage,
       isUser: true,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
-    
-    setMessages(prev => [...prev, userMessage]);
+
+    setMessages((prev) => [...prev, userMessage]);
     setInputMessage("");
     setIsTyping(true);
 
@@ -171,9 +178,9 @@ export default function DashboardPage() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ message: inputMessage })
+        body: JSON.stringify({ message: inputMessage }),
       });
 
       if (!response.ok) {
@@ -181,26 +188,26 @@ export default function DashboardPage() {
       }
 
       const data = await response.json();
-      
+
       // Add bot response to chat
       const botMessage: ChatMessage = {
         text: data.response || "Sorry, I couldn't process your request.",
         isUser: false,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
-      
-      setMessages(prev => [...prev, botMessage]);
+
+      setMessages((prev) => [...prev, botMessage]);
     } catch (error) {
       console.error("Error sending message:", error);
-      
+
       // Add error message
       const errorMessage: ChatMessage = {
         text: "Sorry, there was an error processing your request. Please try again.",
         isUser: false,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
-      
-      setMessages(prev => [...prev, errorMessage]);
+
+      setMessages((prev) => [...prev, errorMessage]);
     } finally {
       setIsTyping(false);
     }
@@ -287,14 +294,17 @@ export default function DashboardPage() {
       {/* Floating Chat Button */}
       <div className="fixed bottom-6 right-6 z-50">
         {!isChatOpen ? (
-          <Button 
+          <Button
             onClick={toggleChat}
             className="h-14 w-14 rounded-full shadow-lg flex items-center justify-center"
           >
             <MessageCircle className="h-6 w-6" />
           </Button>
         ) : (
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-80 sm:w-96 flex flex-col" style={{ height: "500px" }}>
+          <div
+            className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-80 sm:w-96 flex flex-col"
+            style={{ height: "500px" }}
+          >
             {/* Chat Header */}
             <div className="p-4 border-b flex justify-between items-center">
               <h3 className="font-semibold">NewsAI Assistant</h3>
@@ -302,7 +312,7 @@ export default function DashboardPage() {
                 <X className="h-4 w-4" />
               </Button>
             </div>
-            
+
             {/* Chat Messages */}
             <div className="flex-1 p-4 overflow-y-auto">
               {messages.length === 0 ? (
@@ -315,20 +325,25 @@ export default function DashboardPage() {
               ) : (
                 <>
                   {messages.map((msg, index) => (
-                    <div 
-                      key={index} 
-                      className={`mb-4 flex ${msg.isUser ? 'justify-end' : 'justify-start'}`}
+                    <div
+                      key={index}
+                      className={`mb-4 flex ${
+                        msg.isUser ? "justify-end" : "justify-start"
+                      }`}
                     >
-                      <div 
+                      <div
                         className={`max-w-3/4 p-3 rounded-lg ${
-                          msg.isUser 
-                            ? 'bg-primary text-primary-foreground' 
-                            : 'bg-muted'
+                          msg.isUser
+                            ? "bg-primary text-primary-foreground"
+                            : "bg-muted"
                         }`}
                       >
                         {msg.text}
                         <div className="text-xs opacity-70 mt-1">
-                          {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          {msg.timestamp.toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
                         </div>
                       </div>
                     </div>
@@ -336,9 +351,18 @@ export default function DashboardPage() {
                   {isTyping && (
                     <div className="mb-4 flex justify-start">
                       <div className="max-w-3/4 p-3 rounded-lg bg-muted flex space-x-1">
-                        <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                        <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '200ms' }}></div>
-                        <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '400ms' }}></div>
+                        <div
+                          className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"
+                          style={{ animationDelay: "0ms" }}
+                        ></div>
+                        <div
+                          className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"
+                          style={{ animationDelay: "200ms" }}
+                        ></div>
+                        <div
+                          className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"
+                          style={{ animationDelay: "400ms" }}
+                        ></div>
                       </div>
                     </div>
                   )}
@@ -346,7 +370,7 @@ export default function DashboardPage() {
                 </>
               )}
             </div>
-            
+
             {/* Chat Input */}
             <form onSubmit={sendMessage} className="p-4 border-t flex gap-2">
               <input
@@ -358,7 +382,11 @@ export default function DashboardPage() {
                 className="flex-1 bg-muted rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
                 disabled={isTyping}
               />
-              <Button type="submit" size="icon" disabled={isTyping || !inputMessage.trim()}>
+              <Button
+                type="submit"
+                size="icon"
+                disabled={isTyping || !inputMessage.trim()}
+              >
                 <Send className="h-4 w-4" />
               </Button>
             </form>
@@ -376,28 +404,24 @@ interface NewsCardProps {
 function NewsCard({ newsItem }: NewsCardProps) {
   return (
     <Link href={`/${encodeURIComponent(newsItem.id)}`}>
-      <Card className="cursor-pointer hover:shadow-md transition-shadow duration-200">
-        <CardHeader className="pb-2">
-          <div className="text-sm font-medium text-primary mb-1">
-            {newsItem.category}
+      <Card className="cursor-pointer hover:shadow-md transition-shadow duration-200 px-5 min-h-[200px] pt-5">
+        <div className="flex items-start gap-4">
+          <div className="flex-1">
+            <div className="text-sm font-medium text-primary mb-1">
+              {newsItem.category}
+            </div>
+            <CardTitle className="text-xl line-clamp-2">
+              {newsItem.title}
+            </CardTitle>
           </div>
-          <CardTitle className="text-xl line-clamp-2">
-            {newsItem.title}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="aspect-video overflow-hidden bg-muted rounded-md">
-          {newsItem.source.media?.[0] ? (
+          {newsItem.source.media?.[0] && (
             <img
               src={newsItem.source.media[0]}
               alt={newsItem.title}
-              className="object-cover w-full h-full"
+              className="w-28 h-28 object-cover rounded-md"
             />
-          ) : (
-            <div className="flex items-center justify-center h-full text-muted-foreground">
-              No Image Available
-            </div>
           )}
-        </CardContent>
+        </div>
         <CardFooter className="flex justify-between pt-2">
           <div className="text-sm text-muted-foreground">
             {new Date(newsItem.publication_date).toLocaleDateString()}
