@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends
 from apps.core.auth import get_optional_user
-from apps.services.article_service import get_all_articles, get_article_by_id, update_article_duration
-from apps.models.articles_model import DurationRequest
+from apps.services.article_service import get_all_articles, get_article_by_id, update_article_duration, get_all_articles_pagination
+from apps.models.articles_model import DurationRequest, PaginatedArticlesResponse
 from apps.services.article_service import store_article
 router = APIRouter()
 
@@ -21,3 +21,6 @@ async def track_time(article_id: str, duration: DurationRequest,current_user=Dep
 async def store():
     await store_article()
     return {"message": "Article stored successfully"}
+@router.get("/feeds/{page}/{limit}")
+async def feeds_pagination(page: int, limit: int, current_user=Depends(get_optional_user)):
+    return await get_all_articles_pagination(current_user, page, limit)

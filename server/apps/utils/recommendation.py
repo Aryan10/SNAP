@@ -43,7 +43,6 @@ def sort_articles(
         scored.append((art, score))
 
     scored.sort(key=lambda x: x[1], reverse=True)
-    print(scored)
     return [item[0] for item in scored]
 
 def update_weights(

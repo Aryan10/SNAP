@@ -14,7 +14,7 @@ class SourceModel(BaseModel):
 
 class ArticleModel(BaseModel):
     title: str
-    summary: Optional[str] = Field(None, alias="description")  # if used interchangeably
+    summary: Optional[str] = Field(None, alias="description")
     content: Optional[str]
     markdown_content: Optional[str]
     publication_date: datetime = Field(..., alias="publishedAt")
@@ -30,3 +30,10 @@ class ArticleInDB(ArticleModel):
     id: Optional[str] = Field(default=None, alias="_id")
 class DurationRequest(BaseModel):
     durationMs: float
+# Pagination wrapper
+class PaginatedArticlesResponse(BaseModel):
+    page: int
+    limit: int
+    has_more: bool
+    total: Optional[int]
+    feeds: List[ArticleInDB]

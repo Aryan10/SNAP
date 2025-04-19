@@ -1,6 +1,6 @@
-const fs = require("fs");
 const nodemailer = require("nodemailer");
-const path = require("path");
+const generateNewsEmailHTML = require("./generateEmail.js");
+require('dotenv').config();
 
 // Load HTML template and replace placeholders
 async function loadTemplate(filePath, replacements) {
@@ -35,7 +35,6 @@ const transporter = nodemailer.createTransport({
     rejectUnauthorized: false,
   },
 });
-
 // const generateArticlesHTML = (articles) => {
 //   return articles
 //     .map((article) => {
@@ -57,15 +56,11 @@ const transporter = nodemailer.createTransport({
 
 
 
-const sendNewsLetterEmail = async (recipientEmail, jwtToken) => {
+const sendNewsLetterEmail = async (recipientEmail) => {
   try {
     var data = null;
     try {
-      const res = await fetch("http://localhost:8000/feeds", {
-        headers: {
-          Authorization: `Bearer ${jwtToken}`
-        }
-      })
+      const res = await fetch("http://localhost:8000/feeds")
       data = (await res.json()).feeds;
     } catch (e){
       console.log("Error sending email");
@@ -90,6 +85,10 @@ const sendNewsLetterEmail = async (recipientEmail, jwtToken) => {
     console.error("Error sending newsletter email:", error);
   }
 };
+
+sendNewsLetterEmail("nishant040305@gmail.com")
+.then(res => console.log(res))
+.catch(err => console.log(err))
 
 module.exports = {
   sendNewsLetterEmail,
