@@ -7,7 +7,6 @@ from hashlib import sha256
 from agent.chatbot import client, create_chatbot_task
 from agent.news_rag_bot import chatbot_query
 
-
 BASE_DIR = Path(__file__).resolve().parent
 prompts_dir = BASE_DIR / "prompt"
 
@@ -30,9 +29,6 @@ def _get_chatbot_response(query, prompt="chatbot.yaml"):
         return None
     
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("Usage: python run_chatbot.py <query>")
-        sys.exit(1)
-
-    query = sys.argv[1]
-    res = _get_chatbot_response(query)
+    while True:
+        query = input("\n>> ")
+        res = _get_chatbot_response(query)
