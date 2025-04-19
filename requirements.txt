@@ -14,3 +14,4 @@ pydantic[email]==2.11.3
 fastapi[standard]==0.115.12
 bcrypt==4.0.1
 apscheduler==3.9.1
+tqdm==4.66.4

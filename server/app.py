@@ -1,11 +1,14 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from apps.routes import auth_routes, user_routes, feed_routes
-from apps.services.article_service import start_scheduler, shutdown_scheduler
+from apps.services.article_service import start_scheduler, shutdown_scheduler, store_article
 from contextlib import asynccontextmanager
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    print("Storing all new articles")
+    await store_article()
+    print("Stored all new articles")
     start_scheduler()
     yield
     shutdown_scheduler()
