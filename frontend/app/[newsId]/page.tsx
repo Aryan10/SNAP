@@ -216,7 +216,11 @@ export default function NewsDetailPage() {
           )}
           <div className="prose dark:prose-invert max-w-none">
             <ReactMarkdown remarkPlugins={[remarkGfm]}>
-              {newsItem.markdown_content.replace(/\\n/g, "\n")}
+              {newsItem?.markdown_content
+                ? newsItem.markdown_content.replace(/\\n/g, "\n")
+                : newsItem.content
+                ? newsItem.content.replace(/\\n/g, "\n")
+                : ""}
             </ReactMarkdown>
           </div>
           {newsItem.source?.url && (
