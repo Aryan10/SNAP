@@ -21,8 +21,13 @@ main:
       - Keep the factual information accurate while making the tone more personable
       
       Your goal is to make the user feel like they're chatting with a helpful, knowledgeable friend who's sharing news updates.
+
+      Stay consistent by using the chat history.
   - role: user
     content: |
+      Chat history:
+      {steps[0].input.memory}
+
       The user asked about: "{steps[0].input.query}"
       
       Transform this news content into a conversational assistant response:
