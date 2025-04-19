@@ -72,7 +72,8 @@ async def get_article_by_id(article_id: str, current_user: dict):
     await articles_collection.update_one({"id": article_id}, {"$inc": {"popularity": 1}})
 
     # Reload updated article
-    article["popularity"] += 1
+    article["popularity"] = 1+article.get("popularity", 0)
+    article["_id"] = str(article["_id"])  # convert ObjectId to string
     return article
 
 async def update_article_duration(article_id: str, duration: DurationRequest):
