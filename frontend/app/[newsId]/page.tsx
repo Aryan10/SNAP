@@ -204,7 +204,7 @@ export default function NewsDetailPage() {
             {newsItem.author || "Unknown"} in {newsItem.category}
           </div>
           {newsItem.source?.media?.[0] && (
-            <div className="aspect-video overflow-hidden bg-muted rounded-md mb-4 max-h-[400px]">
+            <div className="bg-muted rounded-md mb-4">
               <img
                 src={newsItem.source.media[0]}
                 alt={newsItem.title}
