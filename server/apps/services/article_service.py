@@ -46,17 +46,18 @@ async def get_all_articles(current_user: dict):
     Uses user's category_scores as weights for recommendation.
     """
     # Fetch raw articles
+    
     cursor = articles_collection.find().limit(50)
     raw_articles = await cursor.to_list(length=50)
-
     # Convert ObjectId->_id to string
     for doc in raw_articles:
         doc["_id"] = str(doc.get("_id"))
 
     # If no user or no category_scores, fallback to popularity sort
-    if not current_user or not current_user.get("category_scores"):
+    if not current_user:
         sorted_by_pop = sorted(raw_articles, key=lambda a: a.get("popularity", 0), reverse=True)
         return {"feeds": sorted_by_pop[:20]}
+    current_user = await users_collection.find_one({"email":current_user.get("email")})
 
     # Extract user data
     preferences = current_user.get("preferences", [])
@@ -67,7 +68,6 @@ async def get_all_articles(current_user: dict):
     # Generate personalized ordering
     personalized = sort_articles(preferences, raw_weights, interactions, raw_articles)
     top20 = personalized[:20]
-
     return {"feeds": top20}
 
 async def get_article_by_id(article_id: str, current_user: dict):
