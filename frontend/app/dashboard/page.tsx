@@ -11,7 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Newspaper, Settings, LogOut } from "lucide-react";
+import { Newspaper, Settings, LogOut, MessageCircle, X, Send } from "lucide-react";
 
 interface NewsItem {
   title: string;
@@ -32,6 +32,12 @@ interface NewsItem {
   id: string;
 }
 
+interface ChatMessage {
+  text: string;
+  isUser: boolean;
+  timestamp: Date;
+}
+
 export default function DashboardPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
@@ -43,6 +49,15 @@ export default function DashboardPage() {
   const containerRef = useRef<HTMLDivElement>(null);
   const isFetchingRef = useRef(false);
   const ITEMS_PER_PAGE = 9;
+
+  // Chat state
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [inputMessage, setInputMessage] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     if (containerRef.current) {
       const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
@@ -84,6 +99,7 @@ export default function DashboardPage() {
       setLoadingMore(false);
     }
   }, []);
+
   const handleScroll = () => {
     if (containerRef.current) {
       const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
@@ -93,6 +109,7 @@ export default function DashboardPage() {
       }
     }
   };
+
   // 1) On mount, check auth and load first page
   useEffect(() => {
     if (!localStorage.getItem("SNAPtoken")) {
@@ -102,16 +119,93 @@ export default function DashboardPage() {
     fetchNews(1);
   }, [router, fetchNews]);
 
+  // Auto-scroll chat to bottom when messages change
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  // Focus input when chat opens
+  useEffect(() => {
+    if (isChatOpen) {
+      inputRef.current?.focus();
+    }
+  }, [isChatOpen]);
+
   const handleLogout = () => {
     localStorage.removeItem("SNAPtoken");
     router.push("/");
   };
+
   useEffect(() => {
     if (hasMore) {
       console.log(page);
       fetchNews(page);
     }
   }, [page]);
+
+  const toggleChat = () => {
+    setIsChatOpen(!isChatOpen);
+  };
+
+  const sendMessage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!inputMessage.trim()) return;
+
+    const token = localStorage.getItem("SNAPtoken");
+    if (!token) return;
+
+    // Add user message to chat
+    const userMessage: ChatMessage = {
+      text: inputMessage,
+      isUser: true,
+      timestamp: new Date()
+    };
+    
+    setMessages(prev => [...prev, userMessage]);
+    setInputMessage("");
+    setIsTyping(true);
+
+    try {
+      const response = await fetch("http://localhost:8000/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ message: inputMessage })
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to send message");
+      }
+
+      const data = await response.json();
+      
+      // Add bot response to chat
+      const botMessage: ChatMessage = {
+        text: data.response || "Sorry, I couldn't process your request.",
+        isUser: false,
+        timestamp: new Date()
+      };
+      
+      setMessages(prev => [...prev, botMessage]);
+    } catch (error) {
+      console.error("Error sending message:", error);
+      
+      // Add error message
+      const errorMessage: ChatMessage = {
+        text: "Sorry, there was an error processing your request. Please try again.",
+        isUser: false,
+        timestamp: new Date()
+      };
+      
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
+      setIsTyping(false);
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex flex-col">
@@ -158,7 +252,7 @@ export default function DashboardPage() {
         <div
           ref={containerRef}
           onScroll={handleScroll}
-          className="overflow-y-auto no-scrollbar grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 "
+          className="overflow-y-auto no-scrollbar grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
           style={{ height: "70vh" }}
         >
           {news.map((item, idx) => (
@@ -189,6 +283,88 @@ export default function DashboardPage() {
           <p>© {new Date().getFullYear()} NewsAI. All rights reserved.</p>
         </div>
       </footer>
+
+      {/* Floating Chat Button */}
+      <div className="fixed bottom-6 right-6 z-50">
+        {!isChatOpen ? (
+          <Button 
+            onClick={toggleChat}
+            className="h-14 w-14 rounded-full shadow-lg flex items-center justify-center"
+          >
+            <MessageCircle className="h-6 w-6" />
+          </Button>
+        ) : (
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-80 sm:w-96 flex flex-col" style={{ height: "500px" }}>
+            {/* Chat Header */}
+            <div className="p-4 border-b flex justify-between items-center">
+              <h3 className="font-semibold">NewsAI Assistant</h3>
+              <Button variant="ghost" size="icon" onClick={toggleChat}>
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+            
+            {/* Chat Messages */}
+            <div className="flex-1 p-4 overflow-y-auto">
+              {messages.length === 0 ? (
+                <div className="h-full flex items-center justify-center text-center text-muted-foreground">
+                  <div>
+                    <MessageCircle className="h-10 w-10 mx-auto mb-2 opacity-50" />
+                    <p>Ask me anything about the news!</p>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  {messages.map((msg, index) => (
+                    <div 
+                      key={index} 
+                      className={`mb-4 flex ${msg.isUser ? 'justify-end' : 'justify-start'}`}
+                    >
+                      <div 
+                        className={`max-w-3/4 p-3 rounded-lg ${
+                          msg.isUser 
+                            ? 'bg-primary text-primary-foreground' 
+                            : 'bg-muted'
+                        }`}
+                      >
+                        {msg.text}
+                        <div className="text-xs opacity-70 mt-1">
+                          {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  {isTyping && (
+                    <div className="mb-4 flex justify-start">
+                      <div className="max-w-3/4 p-3 rounded-lg bg-muted flex space-x-1">
+                        <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                        <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '200ms' }}></div>
+                        <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '400ms' }}></div>
+                      </div>
+                    </div>
+                  )}
+                  <div ref={messagesEndRef} />
+                </>
+              )}
+            </div>
+            
+            {/* Chat Input */}
+            <form onSubmit={sendMessage} className="p-4 border-t flex gap-2">
+              <input
+                type="text"
+                ref={inputRef}
+                value={inputMessage}
+                onChange={(e) => setInputMessage(e.target.value)}
+                placeholder="Type your message..."
+                className="flex-1 bg-muted rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+                disabled={isTyping}
+              />
+              <Button type="submit" size="icon" disabled={isTyping || !inputMessage.trim()}>
+                <Send className="h-4 w-4" />
+              </Button>
+            </form>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
