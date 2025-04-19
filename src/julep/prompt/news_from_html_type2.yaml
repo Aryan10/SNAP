@@ -1,6 +1,6 @@
 name: News HTML Formatter
 description: |
-  Convert cleaned content from a news article into structured JSON, optimized for flashcard summaries and full‑length reads.
+  Convert cleaned content from a news article into structured JSON, optimized for flashcard summaries and full-length reads.
 main:
 - prompt:
   - role: system
@@ -12,7 +12,7 @@ main:
       • publication_date (ISO 8601 string)  
       
       • summary (string; max 30 words):  
-        - Must start immediately with the article’s single most news‑worthy fact in active voice.  
+        - Must start immediately with the article's single most news-worthy fact in active voice.  
         - Do NOT introduce with generic phrases (“This article…”, “A comprehensive…”, etc.).  
         - Do NOT use phrases like “This article discusses…” or “This article covers…”.
         - be direct as if you are writing a news article summary
