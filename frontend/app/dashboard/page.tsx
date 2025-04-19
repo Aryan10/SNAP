@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
@@ -7,24 +7,57 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Newspaper, Settings, LogOut } from "lucide-react"
 
+interface NewsItem {
+  title: string
+  author: string
+  publication_date: string
+  summary: string
+  content: string
+  category: string
+  tags: string[]
+  source: {
+    title: string
+    url: string
+    created_utc: number
+    subreddit: string
+    media: string[]
+    content: string
+  },
+  id: number,
+}
+
 export default function DashboardPage() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(true)
+  const [news, setNews] = useState<NewsItem[]>([])
 
   useEffect(() => {
-    // Check if user is authenticated
     const token = localStorage.getItem("SNAPtoken")
     if (!token) {
       router.push("/register")
       return
     }
 
-    // Simulate loading news data
-    const timer = setTimeout(() => {
-      setIsLoading(false)
-    }, 1000)
+    const fetchNews = async () => {
+      try {
+        const response = await fetch("http://localhost:8000/feeds", {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+        if (!response.ok) {
+          throw new Error("Failed to fetch news feed")
+        }
+        const data = await response.json()
+        setNews(data.feeds as NewsItem[])
+      } catch (error) {
+        console.error("Error fetching news:", error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
 
-    return () => clearTimeout(timer)
+    fetchNews()
   }, [router])
 
   const handleLogout = () => {
@@ -80,9 +113,8 @@ export default function DashboardPage() {
         <h1 className="text-3xl font-bold mb-8">Your News Feed</h1>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* Sample news cards - in a real app, these would be populated from API */}
-          {[1, 2, 3, 4, 5, 6].map((item) => (
-            <NewsCard key={item} />
+          {news.map((item, index) => (
+            <NewsCard key={index} newsItem={item} />
           ))}
         </div>
       </main>
@@ -96,38 +128,40 @@ export default function DashboardPage() {
   )
 }
 
-function NewsCard() {
-  // Generate random content for demo purposes
-  const categories = ["Technology", "Business", "Science", "Health", "World"]
-  const category = categories[Math.floor(Math.random() * categories.length)]
+interface NewsCardProps {
+  newsItem: NewsItem
+}
 
-  const titles = [
-    "New AI Model Achieves Breakthrough in Natural Language Understanding",
-    "Renewable Energy Investments Reach All-Time High",
-    "Scientists Discover Potential Treatment for Rare Disease",
-    "Global Economy Shows Signs of Recovery",
-    "New Study Reveals Benefits of Mediterranean Diet",
-  ]
-  const title = titles[Math.floor(Math.random() * titles.length)]
-
+function NewsCard({ newsItem }: NewsCardProps) {
   return (
-    <Card>
-      <CardHeader className="pb-2">
-        <div className="text-sm font-medium text-primary mb-1">{category}</div>
-        <CardTitle className="text-xl">{title}</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <p className="text-muted-foreground">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore
-          magna aliqua.
-        </p>
-      </CardContent>
-      <CardFooter className="flex justify-between">
-        <div className="text-sm text-muted-foreground">{new Date().toLocaleDateString()}</div>
-        <Button variant="ghost" size="sm">
-          Read More
-        </Button>
-      </CardFooter>
-    </Card>
+    <Link href={`/${encodeURIComponent(newsItem.id)}`}>
+      <Card className="cursor-pointer hover:shadow-md transition-shadow duration-200">
+        <CardHeader className="pb-2">
+          <div className="text-sm font-medium text-primary mb-1">{newsItem.category}</div>
+          <CardTitle className="text-xl line-clamp-2">{newsItem.title}</CardTitle>
+        </CardHeader>
+        <CardContent className="aspect-video overflow-hidden bg-muted rounded-md">
+          {newsItem.source.media && newsItem.source.media.length > 0 ? (
+            <img
+              src={newsItem.source.media[0]}
+              alt={newsItem.title}
+              className="object-cover w-full h-full"
+            />
+          ) : (
+            <div className="flex items-center justify-center h-full text-muted-foreground">
+              No Image Available
+            </div>
+          )}
+        </CardContent>
+        <CardFooter className="flex justify-between pt-2">
+          <div className="text-sm text-muted-foreground">
+            {new Date(newsItem.publication_date).toLocaleDateString()}
+          </div>
+          <Button variant="ghost" size="sm">
+            Read More
+          </Button>
+        </CardFooter>
+      </Card>
+    </Link>
   )
 }
