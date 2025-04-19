@@ -7,13 +7,14 @@ from hashlib import sha256
 from agent.extractor import client, create_task
 from agent.formatter import create_formatting_task
 from parser.paragraph_extractor import clean_html
-from parser.api_parser import reddit_parser
+from parser.api_parser import reddit_parser, rapid_news_parser
 from pathlib import Path
 from is_news import is_news
 
 BASE_DIR = Path(__file__).resolve().parent
 prompts_dir = BASE_DIR / "prompt"
 articles_dir = BASE_DIR.parent / "data" / "processed"
+test_dir = BASE_DIR / "sample"
 
 def _extract_news(input, prompt, source=None): 
     """
@@ -74,25 +75,27 @@ def format_news(content, prompt="markdown_formatter.yaml"):
 
     if res.status == "succeeded":
         string = res.output['choices'][0]['message']['content']
+        string = string.replace("\n", "\\n")  # <- escape newlines
         print("Formatted Output:\n", string)
         return string
     else:
         print("Execution Failed")
         return None
 
-def extract_news(obj, parser, prompt):
+def extract_news(obj, parser, prompt, assured_news=True):
     # Convert input to JSON
     formatted, source = parser(obj)
     if formatted is None:
         return None
     
-    news = is_news(formatted)
-    if news is None:
-        return None
+    if not assured_news:
+        news = is_news(formatted)
+        if news is None:
+            return None
 
-    if not news:
-        print("\nNot a news post!")
-        return None
+        if not news:
+            print("\nNot a news post!")
+            return None
     
     article = _extract_news(formatted, prompt=prompt, source=source or obj)
     return article
@@ -102,11 +105,31 @@ if __name__ == "__main__":
         print("Usage: python run_extraction.py <path_to_html_file>")
 
     elif sys.argv[1] == "reddit":
-        file = BASE_DIR / "reddit_test.json"
+        file = test_dir / "reddit.json"
         with open(file, "r", encoding="utf-8") as f:
             data = json.load(f)
         post = data[-1]
-        extract_news(post, parser=reddit_parser, prompt="news_from_reddit_post.yaml")
+        extract_news(
+            post, 
+            parser=reddit_parser, 
+            prompt="news_from_reddit_post.yaml", 
+            assured_news=False
+        )
+
+    elif sys.argv[1] == "rapid_news":
+        file = test_dir / "rapid_news.json"
+        with open(file, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        news = data[0]
+        extract_news(
+            news, 
+            parser=rapid_news_parser, 
+            prompt="news_from_html_type1.yaml"
+        )
 
     else:
-        extract_news(sys.argv[1], parser=clean_html, prompt="news_from_html_type1.yaml")
+        extract_news(
+            sys.argv[1], 
+            parser=clean_html, 
+            prompt="news_from_html_type1.yaml"
+        )
