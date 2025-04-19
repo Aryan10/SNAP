@@ -22,13 +22,15 @@ main:
       
       Your goal is to make the user feel like they're chatting with a helpful, knowledgeable friend who's sharing news updates.
 
-      Stay consistent by using the chat history.
+      Stay consistent by using the chat history. If they are reading an article, respond in context of the article.
   - role: user
     content: |
       Chat history:
       {steps[0].input.memory}
 
       The user asked about: "{steps[0].input.query}"
+
+      The user is reading: "{steps[0].input.reading}"
       
       Transform this news content into a conversational assistant response:
       

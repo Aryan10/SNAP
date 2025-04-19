@@ -31,8 +31,8 @@ def _filter_prompts(prompt):
     
 user_memory = defaultdict(lambda: deque(maxlen=6))
 
-def _get_chatbot_response(query, username="John Doe", prompt="chatbot.yaml"):
-    memory = user_memory[username]
+def get_chatbot_response(query, user_id="debug", reading=None, prompt="chatbot.yaml"):
+    memory = user_memory[user_id]
     task = create_chatbot_task(prompts_dir / prompt)
 
     filtered = _filter_prompts(query)
@@ -46,7 +46,8 @@ def _get_chatbot_response(query, username="John Doe", prompt="chatbot.yaml"):
     exec_ = client.executions.create(
         task_id=task.id, 
         input = {
-            'query': query, 
+            'query': query,
+            'reading': reading,  
             'content' : filtered,
             'memory': "\n".join(memory)
         }
@@ -72,4 +73,4 @@ def _get_chatbot_response(query, username="John Doe", prompt="chatbot.yaml"):
 if __name__ == "__main__":
     while True:
         query = input("\n>> ")
-        res = _get_chatbot_response(query)
+        res = get_chatbot_response(query)
