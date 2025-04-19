@@ -13,6 +13,7 @@ interface NewsItem {
   publication_date: string;
   summary: string;
   content: string;
+  markdown_content: string;
   category: string;
   tags: string[];
   source: {
@@ -215,7 +216,7 @@ export default function NewsDetailPage() {
           )}
           <div className="prose dark:prose-invert max-w-none">
             <ReactMarkdown remarkPlugins={[remarkGfm]}>
-              {newsItem.content.replace(/\\n/g, "\n")}
+              {newsItem.markdown_content.replace(/\\n/g, "\n")}
             </ReactMarkdown>
           </div>
           {newsItem.source?.url && (
