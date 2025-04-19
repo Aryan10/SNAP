@@ -141,7 +141,7 @@ if __name__ == "__main__":
         file = test_dir / "reddit.json"
         with open(file, "r", encoding="utf-8") as f:
             data = json.load(f)
-        post = data[-1]
+        post = data[-2]
         extract_news(
             post, 
             parser=reddit_parser, 
