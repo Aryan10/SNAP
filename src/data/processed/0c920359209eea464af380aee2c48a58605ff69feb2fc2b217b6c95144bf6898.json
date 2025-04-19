@@ -13,5 +13,6 @@
     "ambulance service",
     "traffic incident"
   ],
-  "source": "debug"
+  "source": "debug",
+  "popularity": 2
 }

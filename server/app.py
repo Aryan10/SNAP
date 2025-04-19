@@ -12,6 +12,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from passlib.context import CryptContext
 from dotenv import load_dotenv
 from apps.models.user import RegisterModel, LoginModel, PreferencesModel
+from pydantic import BaseModel
 load_dotenv()
 
 DB_URL = os.getenv("DB_URL")
@@ -38,7 +39,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
+#------------------ MODELS ------------------
+class DurationRequest(BaseModel):
+    durationMs: float
 
 # ------------------ HELPERS ------------------
 async def get_optional_user(credentials: Optional[HTTPAuthorizationCredentials] = Depends(security)):
@@ -178,7 +181,7 @@ async def get_article(article_id: str, current_user: Optional[dict] = Depends(ge
     article["id"] = article_id
     return article
 @app.post("/feeds/{article_id}/track_time")
-async def track_time(article_id: str, durationMs: float):
+async def track_time(article_id: str, duration: DurationRequest):
     data_dir = Path(__file__).resolve().parent.parent / "src" / "data" / "processed"
     article_path = data_dir / f"{article_id}.json"
 
@@ -191,7 +194,7 @@ async def track_time(article_id: str, durationMs: float):
 
     # Update duration
     previous_duration = article.get("duration", 0)
-    article["duration"] = previous_duration + durationMs
+    article["duration"] = previous_duration + duration.durationMs / 1000  # Convert from ms to seconds
 
     # Save back the updated article
     with open(article_path, "w", encoding="utf-8") as f:
@@ -200,6 +203,6 @@ async def track_time(article_id: str, durationMs: float):
     return {
         "message": "Duration updated",
         "article_id": article_id,
-        "added_duration_ms": durationMs,
+        "added_duration_ms": duration.durationMs,
         "duration": article["duration"]
     }

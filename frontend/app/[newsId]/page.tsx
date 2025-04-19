@@ -3,7 +3,7 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import ReactMarkdown from "react-markdown";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 
 interface NewsItem {
@@ -22,6 +22,9 @@ interface NewsItem {
     media: string[];
     content: string;
   };
+  duration: number;
+  popularity: number;
+  id: string;
 }
 
 export default function NewsDetailPage() {
@@ -31,6 +34,7 @@ export default function NewsDetailPage() {
   const newsId = decodeURIComponent(encodedTitle as string);
   const [newsItem, setNewsItem] = useState<NewsItem | null>(null);
   const [loading, setLoading] = useState(true);
+  const startTimeRef = useRef<number | null>(null);
 
   useEffect(() => {
     const token = localStorage.getItem("SNAPtoken");
@@ -46,12 +50,11 @@ export default function NewsDetailPage() {
             Authorization: `Bearer ${token}`,
           },
         });
-        if (!response.ok) {
-          throw new Error("Failed to fetch news feed");
-        }
+        if (!response.ok) throw new Error("Failed to fetch news feed");
         const data = await response.json();
         if (!data) setNewsItem(null);
         else setNewsItem(data as NewsItem);
+        startTimeRef.current = Date.now(); // Start tracking time
       } catch (error) {
         console.error("Error fetching news:", error);
       } finally {
@@ -60,7 +63,36 @@ export default function NewsDetailPage() {
     };
 
     fetchNews();
+
+    const handleBeforeUnload = () => {
+      sendDuration();
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      sendDuration(); // when component unmounts
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
   }, [router, newsId]);
+  const sendDuration = async () => {
+    if (!startTimeRef.current) return;
+    const token = localStorage.getItem("SNAPtoken");
+    const durationMs = Date.now() - startTimeRef.current;
+
+    try {
+      await fetch(`http://localhost:8000/feeds/${newsId}/track_time`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ durationMs }),
+      });
+    } catch (err) {
+      console.error("Failed to track article duration:", err);
+    }
+  };
 
   if (loading) {
     return (
@@ -90,14 +122,18 @@ export default function NewsDetailPage() {
   return (
     <div className="container max-w-screen-lg mx-auto px-4 sm:px-6 py-8">
       <div className="mb-6">
-        <Link href="/dashboard" className="inline-flex items-center text-blue-500 hover:underline">
+        <Link
+          href="/dashboard"
+          className="inline-flex items-center text-blue-500 hover:underline"
+        >
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back to Dashboard
         </Link>
       </div>
       <h1 className="text-3xl font-bold mb-4">{newsItem.title}</h1>
       <div className="text-sm text-muted-foreground mb-2">
-        Published on {new Date(newsItem.publication_date).toLocaleDateString()} by {newsItem.author || "Unknown"} in {newsItem.category}
+        Published on {new Date(newsItem.publication_date).toLocaleDateString()}{" "}
+        by {newsItem.author || "Unknown"} in {newsItem.category}
       </div>
       {newsItem.source.media && newsItem.source.media.length > 0 && (
         <div className="aspect-video overflow-hidden bg-muted rounded-md mb-4 max-h-[400px]">
@@ -113,7 +149,15 @@ export default function NewsDetailPage() {
       </div>
       {newsItem.source.url && (
         <p className="mt-4 text-sm text-muted-foreground">
-          Source: <Link href={newsItem.source.url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">{newsItem.source.title}</Link>
+          Source:{" "}
+          <Link
+            href={newsItem.source.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-500 hover:underline"
+          >
+            {newsItem.source.title}
+          </Link>
         </p>
       )}
     </div>
