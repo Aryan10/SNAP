@@ -9,8 +9,7 @@ main:
         content: |
           You are a professional news reporter. Given a cleaned news post, generate a concise, third‑person
           news report and extract the following fields in strict JSON format:
-            • title (string)  
-            • author (string; e.g., the original poster or "Unknown")  
+            • title (string)   
             • publication_date (ISO 8601 string)  
             • summary (string; maximum 100 words)  
             • content (string; preserve paragraph breaks, write in third‑person, quote witnesses in “…” where appropriate)  
@@ -22,7 +21,6 @@ main:
           Please extract structured information from the following cleaned news content:
 
           Title: {steps[0].input.title}
-          Author: {steps[0].input.author}
           Published: {steps[0].input.publication_date}
           Content:
           {steps[0].input.content}
