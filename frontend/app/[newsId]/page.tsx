@@ -5,7 +5,7 @@ import { ArrowLeft } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useEffect, useState, useRef } from "react";
-
+import Location from "./location";
 interface NewsItem {
   _id: string;
   title: string;
@@ -13,6 +13,7 @@ interface NewsItem {
   publication_date: string;
   summary: string;
   content: string;
+  markdown_content: string;
   category: string;
   tags: string[];
   source: {
@@ -23,6 +24,7 @@ interface NewsItem {
     media: string[];
     content: string;
   };
+  location: string | null;
   duration: number;
   popularity: number;
   id: string;
@@ -214,7 +216,7 @@ export default function NewsDetailPage() {
           )}
           <div className="prose dark:prose-invert max-w-none">
             <ReactMarkdown remarkPlugins={[remarkGfm]}>
-              {newsItem.content.replace(/\\n/g, "\n")}
+              {newsItem.markdown_content.replace(/\\n/g, "\n")}
             </ReactMarkdown>
           </div>
           {newsItem.source?.url && (
@@ -230,6 +232,7 @@ export default function NewsDetailPage() {
               </Link>
             </p>
           )}
+          {newsItem?.location && <Location location={newsItem.location} />}
         </div>
 
         {/* More News Section */}

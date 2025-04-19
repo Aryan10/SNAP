@@ -20,6 +20,7 @@ class ArticleModel(BaseModel):
     publication_date: datetime = Field(..., alias="publishedAt")
     category: str
     tags: List[str]
+    location: Optional[str]
     popularity: int
     duration: Optional[float]
     source: SourceModel
