@@ -6,9 +6,12 @@ from hashlib import sha256
 
 from agent.extractor import client, create_task
 from agent.formatter import create_formatting_task
+
 from parser.paragraph_extractor import clean_html
-from parser.api_parser import reddit_parser, rapid_news_parser
-from pathlib import Path
+from parser.reddit_parser import reddit_parser
+from parser.rapid_news_parser import rapid_news_parser
+from parser.media_stack_parser import media_stack_parser
+
 from is_news import is_news
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -37,7 +40,7 @@ def _extract_news(input, prompt, source=None):
             parsed["source"] = source
 
             # Format content
-            formatted_content = format_news(parsed["content"])
+            formatted_content = _format_news(parsed["content"])
             if formatted_content is None:
                 print("Failed to format content")
                 return None
@@ -62,7 +65,7 @@ def _extract_news(input, prompt, source=None):
         print("Execution Failed")
         return None
 
-def format_news(content, prompt="markdown_formatter.yaml"):
+def _format_news(content, prompt="markdown_formatter.yaml"):
     task = create_formatting_task(prompts_dir / prompt)
     exec_ = client.executions.create(task_id=task.id, input={
         "content": content
@@ -100,6 +103,7 @@ def extract_news(obj, parser, prompt, assured_news=True):
     article = _extract_news(formatted, prompt=prompt, source=source or obj)
     return article
 
+# For debugging only
 if __name__ == "__main__":
     if len(sys.argv) != 2:
         print("Usage: python run_extraction.py <path_to_html_file>")
@@ -124,6 +128,17 @@ if __name__ == "__main__":
         extract_news(
             news, 
             parser=rapid_news_parser, 
+            prompt="news_from_html_type1.yaml"
+        )
+
+    elif sys.argv[1] == "media_stack":
+        file = test_dir / "media_stack.json"
+        with open(file, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        news = data[0]
+        extract_news(
+            news, 
+            parser=media_stack_parser, 
             prompt="news_from_html_type1.yaml"
         )
 
