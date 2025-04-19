@@ -184,9 +184,6 @@ function generateNewsEmailHTML(newsItems) {
             </div>
             <div class="summary">${article.summary || 'No summary available.'}</div>
             <img class="article-image" src="${article.imageUrl || ''}" alt="News image" />
-            <div class="content">
-              <p>${article.content || 'Content for this article would appear here based on API data.'}</p>
-            </div>
             <div class="tags">
               ${(article.tags || ['news']).map(tag => `<span class="tag">${tag}</span>`).join('')}
             </div>
