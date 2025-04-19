@@ -22,7 +22,7 @@ classifier_agent = client.agents.create(
 )
 
 @lru_cache(maxsize=None)
-def create_is_news_task(yaml_path: str = "is_news.yaml"):
+def create_classifier_task(yaml_path: str = "is_news.yaml"):
     """
     Reads a YAML task definition for 'is_news' and registers it under the classifier agent.
     Returns the created task object.

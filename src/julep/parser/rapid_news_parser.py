@@ -3,38 +3,6 @@ from scraper.scraper import scrape_target
 from .paragraph_extractor import clean_html
 from copy import deepcopy
 
-def reddit_parser(post):
-    if post["content"] == "":
-        print("No content found, check if url is news article")
-        post["content"] = clean_html(scrape_target(post["url"]))
-
-    formatted = {}
-
-    formatted["title"] = post.get("title", "Unknown")
-    
-    # Handle the publication date - convert to timestamp if it's not already
-    created_utc = post.get("created_utc", "Unknown")
-    if isinstance(created_utc, str) and created_utc.replace('.', '', 1).isdigit():
-        # If it's a string that represents a number, convert to int
-        formatted["publication_date"] = int(float(created_utc))
-    elif isinstance(created_utc, (int, float)):
-        # If already a number, just use it
-        formatted["publication_date"] = int(created_utc)
-    else:
-        formatted["publication_date"] = "Unknown"
-        
-    formatted["content"] = post.get("content", post.get("selftext", "No content found, not a news article"))
-    
-    # Add additional fields to match news_api_parser output
-    formatted["authors"] = post.get("author", ["Anonymous"])
-    if not isinstance(formatted["authors"], list):
-        formatted["authors"] = [formatted["authors"]]
-    formatted["source"] = "Reddit"
-    formatted["image_url"] = post.get("thumbnail", "")
-    formatted["url"] = post.get("url", "")
-
-    return formatted, post
-
 def rapid_news_parser(news_item):
     """
     Parse news items from rapid news API format into the standard format used by the app
