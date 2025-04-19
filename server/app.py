@@ -11,7 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 from passlib.context import CryptContext
 from dotenv import load_dotenv
-from apps.models.user import RegisterModel, LoginModel, PreferencesModel
+from apps.models.user_model import RegisterModel, LoginModel, PreferencesModel
 from pydantic import BaseModel
 load_dotenv()
 
