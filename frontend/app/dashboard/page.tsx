@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -30,6 +30,44 @@ export default function DashboardPage() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(true)
   const [news, setNews] = useState<NewsItem[]>([])
+  const [page, setPage] = useState(1)
+  const [hasMore, setHasMore] = useState(true)
+  const [loadingMore, setLoadingMore] = useState(false)
+  const loaderRef = useRef<HTMLDivElement>(null)
+  const ITEMS_PER_PAGE = 9
+
+  const fetchNews = useCallback(async (pageNum: number) => {
+    const token = localStorage.getItem("SNAPtoken")
+    if (!token) return
+
+    try {
+      setLoadingMore(pageNum > 1)
+      const response = await fetch(`http://localhost:8000/feeds?page=${pageNum}&limit=${ITEMS_PER_PAGE}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      
+      if (!response.ok) {
+        throw new Error("Failed to fetch news feed")
+      }
+      
+      const data = await response.json()
+      const newArticles = data.feeds as NewsItem[]
+      
+      // Check if we have more articles to load
+      if (newArticles.length < ITEMS_PER_PAGE) {
+        setHasMore(false)
+      }
+
+      setNews(prevNews => pageNum === 1 ? newArticles : [...prevNews, ...newArticles])
+    } catch (error) {
+      console.error("Error fetching news:", error)
+    } finally {
+      setIsLoading(false)
+      setLoadingMore(false)
+    }
+  }, [])
 
   useEffect(() => {
     const token = localStorage.getItem("SNAPtoken")
@@ -38,30 +76,40 @@ export default function DashboardPage() {
       return
     }
 
-    const fetchNews = async () => {
-      try {
-        const response = await fetch("http://localhost:8000/feeds", {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        })
-        if (!response.ok) {
-          throw new Error("Failed to fetch news feed")
+    fetchNews(1)
+  }, [router, fetchNews])
+
+  // Intersection Observer for infinite scrolling
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      entries => {
+        if (entries[0].isIntersecting && hasMore && !loadingMore) {
+          setPage(prevPage => prevPage + 1)
         }
-        const data = await response.json()
-        setNews(data.feeds as NewsItem[])
-      } catch (error) {
-        console.error("Error fetching news:", error)
-      } finally {
-        setIsLoading(false)
-      }
+      },
+      { threshold: 1.0 }
+    )
+
+    if (loaderRef.current) {
+      observer.observe(loaderRef.current)
     }
 
-    fetchNews()
-  }, [router])
+    return () => {
+      if (loaderRef.current) {
+        observer.unobserve(loaderRef.current)
+      }
+    }
+  }, [hasMore, loadingMore])
+
+  // Fetch next page when page changes
+  useEffect(() => {
+    if (page > 1) {
+      fetchNews(page)
+    }
+  }, [page, fetchNews])
 
   const handleLogout = () => {
-    localStorage.removeItem("token")
+    localStorage.removeItem("SNAPtoken")
     router.push("/")
   }
 
@@ -114,9 +162,30 @@ export default function DashboardPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {news.map((item, index) => (
-            <NewsCard key={index} newsItem={item} />
+            <NewsCard key={`${item.id}-${index}`} newsItem={item} />
           ))}
         </div>
+
+        {hasMore && (
+          <div 
+            ref={loaderRef} 
+            className="mt-8 text-center py-6"
+          >
+            {loadingMore ? (
+              <div className="flex justify-center items-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+              </div>
+            ) : (
+              <p className="text-muted-foreground">Scroll for more articles</p>
+            )}
+          </div>
+        )}
+
+        {!hasMore && news.length > 0 && (
+          <div className="mt-8 text-center py-6">
+            <p className="text-muted-foreground">You've reached the end of your feed</p>
+          </div>
+        )}
       </main>
 
       <footer className="border-t py-8">

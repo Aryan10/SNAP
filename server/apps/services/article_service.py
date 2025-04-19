@@ -13,24 +13,31 @@ client = AsyncIOMotorClient(DB_URL)
 db = client.news_db
 articles_collection = db.articles
 
-data_dir = Path(__file__).resolve().parent.parent.parent / "src" / "data" / "processed"
+data_dir = Path(__file__).resolve().parent.parent.parent.parent / "src" / "data" / "processed"
 
 # -------------------- MIGRATION HELPER --------------------
 async def store_article():
+    print(data_dir)
+
     for file in sorted(data_dir.glob("*.json")):
         with open(file, "r", encoding="utf-8") as f:
             article = json.load(f)
             article["id"] = file.stem
 
             # Upsert article into MongoDB
-            existing = articles_collection.find_one({"id": article["id"]})
+            existing = await articles_collection.find_one({"id": article["id"]})
             if not existing:
-                articles_collection.insert_one(article)
+                await articles_collection.insert_one(article)
+
 
 # -------------------- MAIN SERVICES -----------------------
 async def get_all_articles(current_user):
     articles_cursor = articles_collection.find().sort("popularity", -1).limit(20)
-    articles = await articles_cursor.to_list(length=20)
+    articles_raw = await articles_cursor.to_list(length=20)
+    articles = []
+    for doc in articles_raw:
+        doc["_id"] = str(doc["_id"])  # convert ObjectId to string
+        articles.append(doc)
     return {"feeds": articles}
 
 async def get_article_by_id(article_id: str, current_user: dict):
