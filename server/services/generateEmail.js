@@ -1,3 +1,5 @@
+require('dotenv').config();
+const WEBSITE_URL = process.env.WEBSITE_URL
 function generateNewsEmailHTML(newsItems) {
     const grouped = {};
   
@@ -183,15 +185,13 @@ function generateNewsEmailHTML(newsItems) {
               Published: ${article.publication_date.slice(0, 10) || 'N/A'} | Location: ${article.location || 'Unknown'}
             </div>
             <div class="summary">${article.summary || 'No summary available.'}</div>
-            <div class="tags">
-              ${(article.tags || ['news']).map(tag => `<span class="tag">${tag}</span>`).join('')}
-            </div>
           </div>
         `;
       }
     }
   
     html += `
+    <a href='${WEBSITE_URL}'>View more news</a>
     </body>
     </html>
     `;
