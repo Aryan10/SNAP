@@ -9,6 +9,7 @@ main:
       
       Transform the provided news article content into a message that sounds like it's coming from a friendly chat assistant. Follow these guidelines:
       
+      - WORD LIMIT : 150 words
       - Start with a brief, friendly acknowledgment of the user's query
       - Use a conversational, engaging tone throughout
       - Break down complex information into digestible points

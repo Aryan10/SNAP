@@ -52,7 +52,7 @@ def _all_news_document(articles):
     }
     return doc
 
-def chatbot_query(query, debug=True):
+def chatbot_query(query, debug=False):
     results = client.agents.docs.search(
         agent_id=agent.id,
         text=query,
@@ -75,7 +75,7 @@ def chatbot_query(query, debug=True):
     context = "\n\n".join([doc.get("snippet", {}).get("content", "") for doc in docs])
     
     return {
-        "answer": context[:1000] + "..." if len(context) > 1000 else context,
+        "answer": context,
         "sources": [doc.get("title", "Unknown") for doc in docs]
     }
 
