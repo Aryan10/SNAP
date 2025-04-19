@@ -1,9 +1,9 @@
 from datetime import datetime
-from scraper.scraper import scrape_target
+from scraper.scraper import scrape_target, cache_hit
 from .paragraph_extractor import clean_html
 from copy import deepcopy
 
-def rapid_news_parser(news_item):
+def rapid_news_parser(news_item, no_repeat=True):
     """
     Parse news items from rapid news API format into the standard format used by the app
     Scrapes additional content if needed
@@ -34,6 +34,9 @@ def rapid_news_parser(news_item):
         # Scrape the article content from the URL
         try:
             content = clean_html(scrape_target(news_item["link"]))
+            if no_repeat and cache_hit[0]:
+                print("Article already processed, skipping")
+                return None, None
         except Exception as e:
             print(f"Error scraping content from {news_item['link']}: {e}")
             content = news_item.get("snippet", "")

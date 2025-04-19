@@ -1,11 +1,14 @@
 from datetime import datetime
-from scraper.scraper import scrape_target
+from scraper.scraper import scrape_target, cache_hit
 from .paragraph_extractor import clean_html
 
-def reddit_parser(post):
+def reddit_parser(post, no_repeat=True):
     if post["content"] == "":
         print("No content found, check if url is news article")
         post["content"] = clean_html(scrape_target(post["url"]))
+        if no_repeat and cache_hit[0]:
+            print("Article already processed, skipping")
+            return None, None
 
     formatted = {}
 

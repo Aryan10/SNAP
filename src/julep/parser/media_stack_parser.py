@@ -1,9 +1,9 @@
 from datetime import datetime
 from copy import deepcopy
-from scraper.scraper import scrape_target
+from scraper.scraper import scrape_target, cache_hit
 from .paragraph_extractor import clean_html
 
-def media_stack_parser(media_item):
+def media_stack_parser(media_item, no_repeat=True):
     """
     Parse news items from Media Stack API format into the standard format used by the app
     Scrapes additional content if needed
@@ -36,6 +36,9 @@ def media_stack_parser(media_item):
         # Scrape the article content from the URL
         try:
             content = clean_html(scrape_target(media_item["url"]))
+            if no_repeat and cache_hit[0]:
+                print("Article already processed, skipping")
+                return None, None
         except Exception as e:
             print(f"Error scraping content from {media_item['url']}: {e}")
             # If scraping fails, use the description as fallback

@@ -1,9 +1,9 @@
 from datetime import datetime
 from copy import deepcopy
-from scraper.scraper import scrape_target
+from scraper.scraper import scrape_target, cache_hit
 from .paragraph_extractor import clean_html
 
-def gnews_parser(news_item):
+def gnews_parser(news_item, no_repeat=True):
     """
     Parse news items from GNews API format into the standard format used by the app
     Scrapes additional content if needed
@@ -40,6 +40,9 @@ def gnews_parser(news_item):
             # Scrape the article content from the URL
             try:
                 content = clean_html(scrape_target(news_item["url"]))
+                if no_repeat and cache_hit[0]:
+                    print("Article already processed, skipping")
+                    return None, None
             except Exception as e:
                 print(f"Error scraping content from {news_item['url']}: {e}")
                 # If scraping fails, use the existing content or description as fallback

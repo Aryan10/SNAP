@@ -25,6 +25,14 @@ def _extract_news(input, prompt, source=None, debug=False):
     prompt: YAML file under prompts_dir
     source: optional
     """
+    key = input['title'] + str(input['publication_date'])
+    hashed_key = sha256(key.encode('utf-8')).hexdigest()
+    article_path = articles_dir / (hashed_key + ".json")
+
+    if article_path.exists():
+        print(f"Article already exists: {article_path}")
+        return None
+
     task = create_task(prompts_dir / prompt)
     exec_ = client.executions.create(task_id=task.id, input=input)
 
@@ -54,9 +62,7 @@ def _extract_news(input, prompt, source=None, debug=False):
             return None
 
         # Save Structured Output
-        key = input['title'] + str(input['publication_date'])
-        hashed_key = sha256(key.encode('utf-8')).hexdigest()
-        with open(articles_dir / f"{hashed_key}.json", "w", encoding="utf-8") as f:
+        with open(article_path, "w", encoding="utf-8") as f:
             f.write(string)
 
         if debug:

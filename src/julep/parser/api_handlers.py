@@ -12,10 +12,23 @@ def reddit_handler(json_path, extract_news):
         extract_news(post, parser=reddit_parser, prompt="news_from_reddit_post.yaml", assured_news=False)
 
 def rapid_news_handler(json_path, extract_news):
-    pass
+    with open(json_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    assert(data["status"] == "OK")
+    for news in data["data"]:
+        extract_news(news, parser=rapid_news_parser, prompt="news_from_html_type1.yaml")
 
 def gnews_handler(json_path, extract_news):
-    pass
+    with open(json_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    for articles in data["articles"]:
+        extract_news(articles, parser=gnews_parser, prompt="news_from_html_type1.yaml")
+
+def media_stack_handler(json_path, extract_news):
+    with open(json_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    for news in data["data"]:
+        extract_news(news, parser=media_stack_parser, prompt="news_from_html_type1.yaml")
 
 def media_stack_handler(json_path, extract_news):
     pass
