@@ -1,23 +1,12 @@
 import os
 import yaml
-from dotenv import load_dotenv
-from julep import Julep
 from functools import lru_cache
-
-# load environment vars from .env
-load_dotenv()
-
-# Select model and initialize client
-MODEL = os.getenv("JULEP_MODEL", "claude-3.5-sonnet")
-client = Julep(
-    api_key=os.getenv("JULEP_API_KEY"),
-    environment=os.getenv("JULEP_ENVIRONMENT", "production")
-)
+from .julep_client import client, model
 
 # Create a classifier agent that flags text as news or not news
 classifier_agent = client.agents.create(
     name="News Classifier",
-    model=MODEL,
+    model=model,
     about="Classifies input text as news or not news."
 )
 
