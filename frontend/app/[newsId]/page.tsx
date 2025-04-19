@@ -5,7 +5,7 @@ import { ArrowLeft } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useEffect, useState, useRef } from "react";
-
+import Location from "./location";
 interface NewsItem {
   _id: string;
   title: string;
@@ -23,6 +23,7 @@ interface NewsItem {
     media: string[];
     content: string;
   };
+  location: string | null;
   duration: number;
   popularity: number;
   id: string;
@@ -230,6 +231,7 @@ export default function NewsDetailPage() {
               </Link>
             </p>
           )}
+          {newsItem?.location && <Location location={newsItem.location} />}
         </div>
 
         {/* More News Section */}
