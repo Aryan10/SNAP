@@ -105,7 +105,7 @@ if __name__ == "__main__":
         file = BASE_DIR / "reddit_test.json"
         with open(file, "r", encoding="utf-8") as f:
             data = json.load(f)
-        post = data[-2]
+        post = data[-1]
         extract_news(post, parser=reddit_parser, prompt="news_from_reddit_post.yaml")
 
     else:
