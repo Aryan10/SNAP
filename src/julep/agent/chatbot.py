@@ -7,7 +7,7 @@ from .julep_client import client, model
 chatbot_agent = client.agents.create(
     name="Chatbot",
     model=model,
-    about="A chatbot that interacts with users and provides information."
+    about="A RAG chatbot that interacts with users and provides information on news."
 )
 
 @lru_cache(maxsize=None)
