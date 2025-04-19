@@ -36,6 +36,22 @@ def _load_articles(folder_path):
                 })
     return documents
 
+def _all_news_document(articles):
+    titles = ["News", "All News", "Recent News", "Latest News", "Current News"]
+    all_news = []
+    for article in articles:
+        all_news.append(article["title"])
+    doc = {}
+    doc["title"] = " | ".join(titles)
+    doc["content"] = "\n\n".join(all_news)
+    doc["metadata"] = {
+        "tags": ["News"],
+        "location": "",
+        "category": "",
+        "publication_date": "",
+    }
+    return doc
+
 def chatbot_query(query, debug=True):
     results = client.agents.docs.search(
         agent_id=agent.id,
@@ -64,6 +80,7 @@ def chatbot_query(query, debug=True):
     }
 
 articles = _load_articles(PROCESSED_DIR)[:5]
+articles.append(_all_news_document(articles))
 for i in articles:
     print(i["title"])
 
