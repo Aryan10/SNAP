@@ -23,7 +23,7 @@ interface NewsItem {
     media: string[]
     content: string
   },
-  id: number,
+  id: string,
 }
 
 export default function DashboardPage() {
