@@ -63,7 +63,7 @@ const sendNewsLetterEmail = async (recipientEmail, jwtToken) => {
     try {
       const res = await fetch("http://localhost:8000/feeds", {
         headers: {
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${jwtToken}`
         }
       })
       data = (await res.json()).feeds;

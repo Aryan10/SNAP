@@ -71,7 +71,9 @@ function generateNewsEmailHTML(newsItems) {
         color: #555;
       }
     `;
-  
+    const today = new Date();
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    const dateToday = today.toLocaleDateString('en-US', options);
     let html = `<html lang="en">
         <head>
             <meta charset="UTF-8">
@@ -168,7 +170,7 @@ function generateNewsEmailHTML(newsItems) {
         <body>
             <div class="header">
                 <h1 class="masthead">THE DAILY CHRONICLE</h1>
-                 <div class="date">Saturday, April 19, 2025</div>
+                 <div class="date">${dateToday}</div>
                  </div>`;
   
     for (const [category, articles] of Object.entries(grouped)) {
