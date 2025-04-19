@@ -12,7 +12,7 @@ WORKING_JSON     = CONFIG_DIR / "working_proxies.json"
 TARGET_URLS_JSON = CONFIG_DIR / "target_urls.json"
 
 # Scrape output
-BASE_SCRAPE_DIR = BASE_DIR.parent / "data" / "raw"
+BASE_SCRAPE_DIR = BASE_DIR.parent.parent / "data" / "raw"
 TODAY_STR = date.today().isoformat()
 DATE_FOLDER = BASE_SCRAPE_DIR / TODAY_STR
 DATE_FOLDER.mkdir(parents=True, exist_ok=True)
