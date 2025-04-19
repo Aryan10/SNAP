@@ -130,6 +130,7 @@ async def get_feeds(current_user: Optional[dict] = Depends(get_optional_user)):
     for file in sorted(data_dir.glob("*.json")):
         with open(file, "r", encoding="utf-8") as f:
             article = json.load(f)
+            article["id"] = file.stem
             all_articles.append(article)
 
     # If user is logged in, you can personalize here (future extension)
@@ -141,3 +142,38 @@ async def get_feeds(current_user: Optional[dict] = Depends(get_optional_user)):
     top_articles = all_articles[:20]
 
     return {"feeds": top_articles}
+@app.get("/feeds/{article_id}")
+async def get_article(article_id: str, current_user: Optional[dict] = Depends(get_optional_user)):
+    data_dir = Path(__file__).resolve().parent.parent / "src" / "data" / "processed"
+    article_path = data_dir / f"{article_id}.json"
+
+    if not article_path.exists():
+        raise HTTPException(status_code=404, detail="Article not found")
+
+    with open(article_path, "r", encoding="utf-8") as f:
+        article = json.load(f)
+
+    tags = article.get("tags", [])
+
+    # Update user category_scores in MongoDB
+    if current_user:
+        user_id = current_user.get("_id") or current_user.get("id")  # Adjust depending on your schema
+        if user_id:
+            updates = {}
+            for tag in tags:
+                updates[f"category_scores.{tag}"] = 1
+
+            # Use $inc to increment each tag
+            await users_collection.update_one(
+                {"_id": user_id},
+                {"$inc": updates}
+            )
+
+    # Update article popularity
+    article["popularity"] = article.get("popularity", 0) + 1
+
+    with open(article_path, "w", encoding="utf-8") as f:
+        json.dump(article, f, ensure_ascii=False, indent=2)
+
+    article["id"] = article_id
+    return article
