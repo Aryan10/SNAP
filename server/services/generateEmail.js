@@ -1,20 +1,23 @@
-require('dotenv').config();
-const WEBSITE_URL = process.env.WEBSITE_URL
+require("dotenv").config();
+const WEBSITE_URL = process.env.WEBSITE_URL;
 function generateNewsEmailHTML(newsItems) {
-    const grouped = {};
-  
-    // Group news by category
-    for (const item of newsItems) {
-      const category = item.category || "Others";
-      if (!grouped[category]) grouped[category] = [];
-      grouped[category].push(item);
-    }
-  
-    const currentDate = new Date().toLocaleDateString("en-US", {
-      weekday: "long", year: "numeric", month: "long", day: "numeric"
-    });
-  
-    const styles = `
+  const grouped = {};
+
+  // Group news by category
+  for (const item of newsItems) {
+    const category = item.category || "Others";
+    if (!grouped[category]) grouped[category] = [];
+    grouped[category].push(item);
+  }
+
+  const currentDate = new Date().toLocaleDateString("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
+  const styles = `
       body {
         font-family: Arial, sans-serif;
         background: #f4f4f4;
@@ -73,10 +76,15 @@ function generateNewsEmailHTML(newsItems) {
         color: #555;
       }
     `;
-    const today = new Date();
-    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    const dateToday = today.toLocaleDateString('en-US', options);
-    let html = `<html lang="en">
+  const today = new Date();
+  const options = {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  };
+  const dateToday = today.toLocaleDateString("en-US", options);
+  let html = `<html lang="en">
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -174,30 +182,39 @@ function generateNewsEmailHTML(newsItems) {
                 <h1 class="masthead">THE DAILY CHRONICLE</h1>
                  <div class="date">${dateToday}</div>
                  </div>`;
-  
-    for (const [category, articles] of Object.entries(grouped)) {
-      html += `<h2 class="category">${category}</h2>`;
-      for (const article of articles) {
-        html += `
-          <div class="article">
-            <h3 class="headline">${article.title || 'Untitled'}</h3>
-            <div class="metadata">
-              Published: ${article.publication_date.slice(0, 10) || 'N/A'} | Location: ${article.location || 'Unknown'}
-            </div>
-            <div class="summary">${article.summary || 'No summary available.'}</div>
+
+  for (const [category, articles] of Object.entries(grouped)) {
+    html += `<h2 class="category">${category}</h2>`;
+    for (const article of articles) {
+      html += `
+        <div class="article">
+          <h3 class="headline">
+            <a href="${process.env.CLIENT}/${
+        article.id
+      }" style="color: black; text-decoration: none;">
+              ${article.title || "Untitled"}
+            </a>
+          </h3>
+          <div class="metadata">
+            Published: ${
+              article.publication_date?.slice(0, 10) || "N/A"
+            } | Location: ${article.location || "Unknown"}
           </div>
-        `;
-      }
+          <div class="summary">
+            ${article.summary || "No summary available."}
+          </div>
+        </div>
+      `;
     }
-  
-    html += `
+  }
+
+  html += `
     <a href='${WEBSITE_URL}'>View more news</a>
     </body>
     </html>
     `;
-  
-    return html;
-  }
-  
+
+  return html;
+}
 
 module.exports = generateNewsEmailHTML;
