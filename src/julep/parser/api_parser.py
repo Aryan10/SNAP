@@ -1,5 +1,7 @@
+from datetime import datetime
 from scraper.scraper import scrape_target
 from .paragraph_extractor import clean_html
+from copy import deepcopy
 
 def reddit_parser(post):
     if post["content"] == "":
@@ -9,7 +11,77 @@ def reddit_parser(post):
     formatted = {}
 
     formatted["title"] = post.get("title", "Unknown")
-    formatted["publication_date"] = post.get("created_utc", "Unknown")
+    
+    # Handle the publication date - convert to timestamp if it's not already
+    created_utc = post.get("created_utc", "Unknown")
+    if isinstance(created_utc, str) and created_utc.replace('.', '', 1).isdigit():
+        # If it's a string that represents a number, convert to int
+        formatted["publication_date"] = int(float(created_utc))
+    elif isinstance(created_utc, (int, float)):
+        # If already a number, just use it
+        formatted["publication_date"] = int(created_utc)
+    else:
+        formatted["publication_date"] = "Unknown"
+        
     formatted["content"] = post.get("content", post.get("selftext", "No content found, not a news article"))
+    
+    # Add additional fields to match news_api_parser output
+    formatted["authors"] = post.get("author", ["Anonymous"])
+    if not isinstance(formatted["authors"], list):
+        formatted["authors"] = [formatted["authors"]]
+    formatted["source"] = "Reddit"
+    formatted["image_url"] = post.get("thumbnail", "")
+    formatted["url"] = post.get("url", "")
 
     return formatted, post
+
+def rapid_news_parser(news_item):
+    """
+    Parse news items from rapid news API format into the standard format used by the app
+    Scrapes additional content if needed
+    
+    Args:
+        news_item (dict): News item from the API
+    """
+
+    formatted = {}
+    
+    # Extract basic fields
+    formatted["title"] = news_item.get("title", "Unknown")
+    
+    # Convert UTC datetime string to timestamp if available
+    published_date = news_item.get("published_datetime_utc")
+    if published_date:
+        try:
+            dt = datetime.strptime(published_date, "%Y-%m-%dT%H:%M:%S.%fZ")
+            formatted["publication_date"] = int(dt.timestamp())
+        except (ValueError, TypeError):
+            formatted["publication_date"] = "Unknown"
+    else:
+        formatted["publication_date"] = "Unknown"
+
+    # Handle content - scrape if not present
+    content = ""
+    if "link" in news_item:
+        # Scrape the article content from the URL
+        try:
+            content = clean_html(scrape_target(news_item["link"]))
+        except Exception as e:
+            print(f"Error scraping content from {news_item['link']}: {e}")
+            content = news_item.get("snippet", "")
+    else:
+        content = news_item.get("snippet", "")
+    
+    # Use snippet as fallback if we couldn't get content
+    if not content:
+        content = news_item.get("snippet", "No content found")
+        
+    formatted["content"] = content
+    
+    # Add additional metadata that might be useful for the app
+    formatted["authors"] = news_item.get("authors", [])
+    formatted["source"] = news_item.get("source_name", "Unknown")
+    formatted["image_url"] = news_item.get("photo_url")
+    formatted["url"] = news_item.get("link", "")
+    
+    return formatted, deepcopy(formatted)
