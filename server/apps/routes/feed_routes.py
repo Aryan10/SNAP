@@ -14,8 +14,9 @@ async def article(article_id: str, current_user=Depends(get_optional_user)):
     return await get_article_by_id(article_id, current_user)
 
 @router.post("/feeds/{article_id}/track_time")
-async def track_time(article_id: str, duration: DurationRequest):
-    return await update_article_duration(article_id, duration)
+async def track_time(article_id: str, duration: DurationRequest,current_user=Depends(get_optional_user)):
+    print(current_user)
+    return await update_article_duration(article_id, duration, current_user)
 @router.get("/store_article")
 async def store():
     await store_article()

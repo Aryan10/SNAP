@@ -82,7 +82,7 @@ async def get_article_by_id(article_id: str, current_user: dict):
     article["_id"] = str(article.get("_id"))
     return article
 
-async def update_article_duration(article_id: str, duration: DurationRequest, current_user: dict = None):
+async def update_article_duration(article_id: str, duration: DurationRequest, current_user: dict ):
     article = await articles_collection.find_one({"id": article_id})
     if not article:
         raise HTTPException(status_code=404, detail="Article not found")
@@ -94,14 +94,13 @@ async def update_article_duration(article_id: str, duration: DurationRequest, cu
         {"id": article_id},
         {"$set": {"duration": new_duration}}
     )
-
+    print(current_user)
     # Optionally update user's interaction and weights
-    print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-    if current_user and current_user.get("preferences"):
-        user_id = current_user.get("_id") or current_user.get("id")
+    if current_user:
+        user_id = current_user.get("email")
         cat = article.get("category")
         # Fetch latest user doc
-        user_doc = await users_collection.find_one({"_id": user_id})
+        user_doc = await users_collection.find_one({"email": user_id})
         prefs = user_doc.get("preferences", [])
         raw_weights = user_doc.get("bias", {})
         # Normalize existing weights
@@ -109,13 +108,14 @@ async def update_article_duration(article_id: str, duration: DurationRequest, cu
         weights = {c: raw_weights.get(c, 0) / total_w for c in prefs}
         inter = user_doc.get("category_scores", {c: (0,0.0) for c in prefs})
         # Update weights based on view
-        new_weights = update_weights(weights, inter, cat, clicked=True, view_time=added_seconds)
+        new_weights = update_weights(weights, inter, cat, clicked=True, duration=added_seconds)
         # Save back
         # Denormalize weights back to category_scores scale
         updated_scores = {c: new_weights.get(c, 0) for c in prefs}
+        print("Updated Scores", updated_scores)
         await users_collection.update_one(
-            {"_id": user_id},
-            {"$set": {"bias": updated_scores, "category_scores": inter}}
+            {"email": user_id},
+            {"$set": {"bias": new_weights, "category_scores": inter}}
         )
 
     return {
