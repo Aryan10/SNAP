@@ -1,8 +1,10 @@
+from scraper.scraper import scrape_target
+from .paragraph_extractor import clean_html
+
 def reddit_parser(post):
     if post["content"] == "":
         print("No content found, check if url is news article")
-        print(post["url"])
-        return None
+        post["content"] = clean_html(scrape_target(post["url"]))
 
     formatted = {}
 
