@@ -39,13 +39,13 @@ def _extract_news(input, prompt, source=None):
             parsed["source"] = source
 
             # Format content
-            formatted_content = _format_news(parsed["content"])
-            if formatted_content is None:
-                print("Failed to format content")
-                return None
-            parsed["content"] = formatted_content
+            parsed["markdown_content"] = _format_news(parsed["content"])
+            if parsed["markdown_content"] is None:
+                print("Exception: Failed to format content")
 
             string = json.dumps(parsed, indent=2)
+            print("Added markdown content\n")
+
         except Exception as e:
             print("Error parsing JSON")
             print("Error:", e)
@@ -91,7 +91,7 @@ def _is_news(input, prompt="is_news.yaml") -> bool | None:
         print("Execution Failed")
         return None
 
-def _format_news(content, prompt="markdown_formatter.yaml"):
+def _format_news(content, prompt="markdown_formatter.yaml") -> str | None:
     task = create_formatting_task(prompts_dir / prompt)
     exec_ = client.executions.create(task_id=task.id, input={
         "content": content

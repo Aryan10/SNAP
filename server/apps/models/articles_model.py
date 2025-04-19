@@ -16,6 +16,7 @@ class ArticleModel(BaseModel):
     title: str
     summary: Optional[str] = Field(None, alias="description")  # if used interchangeably
     content: Optional[str]
+    markdown_content: Optional[str]
     publication_date: datetime = Field(..., alias="publishedAt")
     category: str
     tags: List[str]
