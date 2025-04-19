@@ -183,7 +183,6 @@ function generateNewsEmailHTML(newsItems) {
               Published: ${article.publication_date.slice(0, 10) || 'N/A'} | Location: ${article.location || 'Unknown'}
             </div>
             <div class="summary">${article.summary || 'No summary available.'}</div>
-            <img class="article-image" src="${article.imageUrl || ''}" alt="News image" />
             <div class="tags">
               ${(article.tags || ['news']).map(tag => `<span class="tag">${tag}</span>`).join('')}
             </div>

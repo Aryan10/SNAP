@@ -56,15 +56,11 @@ const transporter = nodemailer.createTransport({
 
 
 
-const sendNewsLetterEmail = async (recipientEmail, jwtToken) => {
+const sendNewsLetterEmail = async (recipientEmail) => {
   try {
     var data = null;
     try {
-      const res = await fetch("http://localhost:8000/feeds", {
-        headers: {
-          Authorization: `Bearer ${jwtToken}`
-        }
-      })
+      const res = await fetch("http://localhost:8000/feeds")
       data = (await res.json()).feeds;
     } catch (e){
       console.log("Error sending email");
@@ -89,6 +85,10 @@ const sendNewsLetterEmail = async (recipientEmail, jwtToken) => {
     console.error("Error sending newsletter email:", error);
   }
 };
+
+sendNewsLetterEmail("nishant040305@gmail.com")
+.then(res => console.log(res))
+.catch(err => console.log(err))
 
 module.exports = {
   sendNewsLetterEmail,
