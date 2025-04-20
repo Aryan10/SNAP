@@ -15,6 +15,19 @@ By combining structured extraction (via Julep AI), community-driven discovery, a
   
 ## Presentation Link:
   <a href="https://docs.google.com/document/d/1q_LBPiuw8-IA4X1Dm2E96WfQDCPOj8Ngu7Z2Sg2lDno/edit?tab=t.0"> PPT link here </a>
+
+## Technology Stack:
+1) Julep AI
+2) Next.js
+3) FastAPI
+4) BeautifulSoup
+5) nodemailer (javascript)
+
+## Languages used:
+- Python
+- Typescript
+- Javascrip
+- YAML
   
 ## Idea
 
