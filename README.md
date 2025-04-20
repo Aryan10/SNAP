@@ -4,6 +4,10 @@
 
 <a href="https://hack36.in"> <img src="https://postimage.me/images/2025/04/19/built-at-hack36.png" height=24px> </a>
 
+## Theme : Community and Upliftment
+
+## Applicable Tracks : Julep AI
+
 ## Introduction
 
 An AI-driven platform that cuts through the noise, bias, and bloat of traditional media by extracting core news from web scraping, trusted APIs, and real-time community sources like Reddit. The system strips filler content, rewrites news and community posts into clear, professional-grade articles using advanced AI models.
