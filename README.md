@@ -1,3 +1,5 @@
+![Banner](https://postimage.me/images/2025/04/19/built-at-hack36.png)
+
 # AI-Powered Community News Website
 
 ## Abstract
