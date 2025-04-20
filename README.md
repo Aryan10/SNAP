@@ -86,6 +86,8 @@ cd frontend
 npm run dev
 ```
 
+Make sure to add `.env` file and API keys
+
 ## Contributors:
 
 Team Name: SNAP_back_to_reality
