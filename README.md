@@ -1,13 +1,21 @@
-![Banner](https://postimage.me/images/2025/04/19/built-at-hack36.png)
+<h1 align="center">Distillnews : AI-Powered Community News Website</h1>
+<p align="center">
+</p>
 
-# AI-Powered Community News Website
+<a href="https://hack36.in"> <img src="https://postimage.me/images/2025/04/19/built-at-hack36.png" height=24px> </a>
 
-## Abstract
+## Introduction
 
 An AI-driven platform that cuts through the noise, bias, and bloat of traditional media by extracting core news from web scraping, trusted APIs, and real-time community sources like Reddit. The system strips filler content, rewrites news and community posts into clear, professional-grade articles using advanced AI models.
 
 By combining structured extraction (via Julep AI), community-driven discovery, and smart personalization, we empower communities with direct access to reliable local and global updates—without clickbait, corporate spin, or media gatekeeping. This approach also enables underrepresented voices on social platforms to reach a wider audience through well-written, structured articles.
 
+## Demo Video Link:
+  <a href="#"></a>
+  
+## Presentation Link:
+  <a href="https://docs.google.com/document/d/1q_LBPiuw8-IA4X1Dm2E96WfQDCPOj8Ngu7Z2Sg2lDno/edit?tab=t.0"> PPT link here </a>
+  
 ## Idea
 
 We want to build an AI-driven platform to:
@@ -44,3 +52,15 @@ We want to build an AI-driven platform to:
 ---
 
 *Built with Julep AI and open-source community data.*
+
+## Contributors:
+
+Team Name: SNAP_back_to_reality
+
+- [Shivam Aryan](https://github.com/Aryan10)
+- [Nishant Mohan](https://github.com/Nishant040305)
+- [Poojan Kothari](https://github.com/techguy940)
+- [Shaurya Singh](https://github.com/shauryasf)
+
+### Made at:
+<a href="https://hack36.in"> <img src="https://postimage.me/images/2025/04/19/built-at-hack36.png" height=24px> </a>
