@@ -4,6 +4,7 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import ReactMarkdown from "react-markdown";
 import {
   Card,
   CardContent,
@@ -188,7 +189,7 @@ export default function DashboardPage() {
       }
 
       const data = await response.json();
-
+      console.log(data);
       // Add bot response to chat
       const botMessage: ChatMessage = {
         text: data.response || "Sorry, I couldn't process your request.",
@@ -338,7 +339,9 @@ export default function DashboardPage() {
                             : "bg-muted"
                         }`}
                       >
-                        {msg.text}
+                        <ReactMarkdown>
+                          {msg.text.replaceAll("\n", "\n\n")}
+                        </ReactMarkdown>
                         <div className="text-xs opacity-70 mt-1">
                           {msg.timestamp.toLocaleTimeString([], {
                             hour: "2-digit",

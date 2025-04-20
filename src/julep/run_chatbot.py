@@ -53,6 +53,10 @@ def get_chatbot_response(query, user_id="debug", reading=None, prompt="chatbot.y
         }
     )
 
+    with open("debug.log", "a") as f:
+        f.write(f"User: {user_id}\nMemory: {' '.join(memory)}\n")
+
+
     print(f"Executing chatbot task for: {query}")
     while (res := client.executions.get(exec_.id)).status not in ["succeeded", "failed"]:
         print("Status:", res.status)

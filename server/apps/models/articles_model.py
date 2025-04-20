@@ -37,3 +37,5 @@ class PaginatedArticlesResponse(BaseModel):
     has_more: bool
     total: Optional[int]
     feeds: List[ArticleInDB]
+class ChatMessage(BaseModel):
+    message: str
