@@ -66,6 +66,22 @@ We want to build an AI-driven platform to:
 
 *Built with Julep AI and open-source community data.*
 
+## Installation / Quickstart
+```bash
+cd frontend
+npm install
+```
+
+```bash
+pip install -r requirements.txt
+fastapi dev server/app.py
+```
+
+```bash
+cd frontend
+npm run dev
+```
+
 ## Contributors:
 
 Team Name: SNAP_back_to_reality
