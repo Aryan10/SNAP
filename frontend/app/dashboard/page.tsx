@@ -237,7 +237,7 @@ export default function DashboardPage() {
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <Link href="/" className="flex items-center gap-2">
             <Newspaper className="h-6 w-6 text-primary" />
-            <h1 className="text-2xl font-bold">NewsAI</h1>
+            <h1 className="text-2xl font-bold">DistillNews</h1>
           </Link>
           <div className="flex items-center gap-4">
             <Link href="/preferences">
@@ -288,7 +288,7 @@ export default function DashboardPage() {
 
       <footer className="border-t py-8">
         <div className="container mx-auto px-4 text-center text-muted-foreground">
-          <p>© {new Date().getFullYear()} NewsAI. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} DistillNews. All rights reserved.</p>
         </div>
       </footer>
 
@@ -308,7 +308,7 @@ export default function DashboardPage() {
           >
             {/* Chat Header */}
             <div className="p-4 border-b flex justify-between items-center">
-              <h3 className="font-semibold">NewsAI Assistant</h3>
+              <h3 className="font-semibold">DistillNews Assistant</h3>
               <Button variant="ghost" size="icon" onClick={toggleChat}>
                 <X className="h-4 w-4" />
               </Button>

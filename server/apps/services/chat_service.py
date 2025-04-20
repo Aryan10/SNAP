@@ -12,12 +12,12 @@ client = AsyncIOMotorClient(DB_URL)
 articles_collection = client.news_db.articles
 users_collection = client.news_db.SNAPUsers
 
-async def get_chat(message: str, article_id:str,current_user: Optional[dict]=None):
+async def get_chat(message: str, article_id:str,current_user=None):
     data = await articles_collection.find_one({"id": article_id})
-    article = data["content"]
+    article = data.get("content","")
     if(current_user is None):
         random_string = secrets.token_hex(32)  # 32 bytes = 64 hex characters
-        return get_chatbot_response(query=message,user_id=random_string,reading=None)
+        return get_chatbot_response(query=message,user_id=random_string,reading=article)
     user_id = await users_collection.find_one({"email": current_user["email"]})
     user_id = user_id["_id"]
     return get_chatbot_response(query=message,user_id=user_id,reading=article)

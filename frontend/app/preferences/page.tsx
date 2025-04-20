@@ -162,7 +162,7 @@ export default function PreferencesPage() {
           {/* Logo and Title */}
           <Link href="/" className="flex items-center gap-2">
             <Newspaper className="h-6 w-6 text-primary" />
-            <h1 className="text-2xl font-bold">NewsAI</h1>
+            <h1 className="text-2xl font-bold">DistillNews</h1>
           </Link>
 
           {/* Back Button */}

@@ -1,7 +1,15 @@
-import type React from "react"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { ArrowRight, Newspaper, Zap, Filter, RefreshCw, Shield, Lightbulb } from "lucide-react"
+import type React from "react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import {
+  ArrowRight,
+  Newspaper,
+  Zap,
+  Filter,
+  RefreshCw,
+  Shield,
+  Lightbulb,
+} from "lucide-react";
 
 export default function HomePage() {
   return (
@@ -10,7 +18,7 @@ export default function HomePage() {
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center gap-2">
             <Newspaper className="h-6 w-6 text-primary" />
-            <h1 className="text-2xl font-bold">NewsAI</h1>
+            <h1 className="text-2xl font-bold">DistillNews</h1>
           </div>
           <Link href="/register">
             <Button>
@@ -25,11 +33,13 @@ export default function HomePage() {
         <section className="py-20 px-4">
           <div className="container mx-auto max-w-5xl text-center">
             <h1 className="text-4xl md:text-6xl font-bold mb-6">
-              News That Matters, <span className="text-primary">Refined by AI</span>
+              News That Matters,{" "}
+              <span className="text-primary">Refined by AI</span>
             </h1>
             <p className="text-xl text-muted-foreground mb-10 max-w-3xl mx-auto">
-              We gather news from every source, filter out the noise, and deliver only the most relevant, high-quality
-              content tailored to your interests.
+              We gather news from every source, filter out the noise, and
+              deliver only the most relevant, high-quality content tailored to
+              your interests.
             </p>
             <Link href="/register">
               <Button size="lg" className="px-8">
@@ -42,7 +52,9 @@ export default function HomePage() {
 
         <section className="bg-muted py-20 px-4">
           <div className="container mx-auto max-w-6xl">
-            <h2 className="text-3xl font-bold text-center mb-12">Why NewsAI is Better</h2>
+            <h2 className="text-3xl font-bold text-center mb-12">
+              Why DistillNews is Better
+            </h2>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               <div className="cursor-pointer">
@@ -87,16 +99,18 @@ export default function HomePage() {
                   description="Our AI explains background, impact, and context to keep you truly informed."
                 />
               </div>
-
             </div>
           </div>
         </section>
 
         <section className="py-20 px-4">
           <div className="container mx-auto max-w-4xl text-center">
-            <h2 className="text-3xl font-bold mb-6">Ready to transform your news experience?</h2>
+            <h2 className="text-3xl font-bold mb-6">
+              Ready to transform your news experience?
+            </h2>
             <p className="text-xl text-muted-foreground mb-10">
-              Join thousands of readers who've switched to a smarter way to stay informed.
+              Join thousands of readers who've switched to a smarter way to stay
+              informed.
             </p>
             <Link href="/register">
               <Button size="lg" className="px-8">
@@ -110,11 +124,11 @@ export default function HomePage() {
 
       <footer className="border-t py-8">
         <div className="container mx-auto px-4 text-center text-muted-foreground">
-          <p>© {new Date().getFullYear()} NewsAI. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} DistillNews. All rights reserved.</p>
         </div>
       </footer>
     </div>
-  )
+  );
 }
 
 function FeatureCard({
@@ -122,9 +136,9 @@ function FeatureCard({
   title,
   description,
 }: {
-  icon: React.ReactNode
-  title: string
-  description: string
+  icon: React.ReactNode;
+  title: string;
+  description: string;
 }) {
   return (
     <div className="bg-background p-6 rounded-lg shadow-sm border">
@@ -132,5 +146,5 @@ function FeatureCard({
       <h3 className="text-xl font-semibold mb-2">{title}</h3>
       <p className="text-muted-foreground">{description}</p>
     </div>
-  )
+  );
 }

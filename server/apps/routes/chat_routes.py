@@ -8,7 +8,7 @@ router = APIRouter()
 
 @router.post("/chat/{article_id}")
 async def response_chat(message: str, article_id: str, current_user: Optional[dict]=None):
-    return await get_chat(message=message, article_id=article_id, current_user=current_user)
+    return await get_chat(message=message, article_id=article_id)
 
 @router.post("/chat")
 async def response_chat_without_article(message = Body(...)):

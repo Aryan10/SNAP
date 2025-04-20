@@ -1,60 +1,67 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Newspaper } from "lucide-react"
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Newspaper } from "lucide-react";
 
 export default function AuthPage() {
-  const router = useRouter()
-  const [isLogin, setIsLogin] = useState(false)
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
+  const router = useRouter();
+  const [isLogin, setIsLogin] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
+    e.preventDefault();
+    setIsLoading(true);
 
     try {
-      const endpoint = isLogin ? "/login" : "/register"
+      const endpoint = isLogin ? "/login" : "/register";
       const response = await fetch(`http://localhost:8000${endpoint}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ email, password }),
-      })
+      });
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (!response.ok) {
-        alert(data.message || "An error occurred")
-        setIsLoading(false)
-        return
+        alert(data.message || "An error occurred");
+        setIsLoading(false);
+        return;
       }
 
       // Save JWT token
-      localStorage.setItem("SNAPtoken", data.access_token)
+      localStorage.setItem("SNAPtoken", data.access_token);
 
       // Redirect based on login/register
       if (isLogin) {
-        router.push("/dashboard")
+        router.push("/dashboard");
       } else {
-        router.push("/preferences")
+        router.push("/preferences");
       }
     } catch (error) {
-      alert("Failed to connect to the server. Please try again.")
-      console.error("Auth error:", error)
-      setIsLoading(false)
+      alert("Failed to connect to the server. Please try again.");
+      console.error("Auth error:", error);
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -62,7 +69,7 @@ export default function AuthPage() {
         <div className="container mx-auto px-4 py-4">
           <Link href="/" className="flex items-center gap-2">
             <Newspaper className="h-6 w-6 text-primary" />
-            <h1 className="text-2xl font-bold">NewsAI</h1>
+            <h1 className="text-2xl font-bold">DistillNews</h1>
           </Link>
         </div>
       </header>
@@ -70,11 +77,13 @@ export default function AuthPage() {
       <main className="flex-1 flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
           <CardHeader>
-            <CardTitle>{isLogin ? "Welcome Back" : "Create an Account"}</CardTitle>
+            <CardTitle>
+              {isLogin ? "Welcome Back" : "Create an Account"}
+            </CardTitle>
             <CardDescription>
               {isLogin
                 ? "Sign in to access your personalized news feed"
-                : "Join NewsAI to start receiving tailored news updates"}
+                : "Join DistillNews to start receiving tailored news updates"}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -102,7 +111,11 @@ export default function AuthPage() {
                   />
                 </div>
                 <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? "Processing..." : isLogin ? "Sign In" : "Create Account"}
+                  {isLoading
+                    ? "Processing..."
+                    : isLogin
+                    ? "Sign In"
+                    : "Create Account"}
                 </Button>
               </div>
             </form>
@@ -112,14 +125,22 @@ export default function AuthPage() {
               {isLogin ? (
                 <p>
                   Don't have an account?{" "}
-                  <Button variant="link" className="p-0" onClick={() => setIsLogin(false)}>
+                  <Button
+                    variant="link"
+                    className="p-0"
+                    onClick={() => setIsLogin(false)}
+                  >
                     Sign up
                   </Button>
                 </p>
               ) : (
                 <p>
                   Already have an account?{" "}
-                  <Button variant="link" className="p-0" onClick={() => setIsLogin(true)}>
+                  <Button
+                    variant="link"
+                    className="p-0"
+                    onClick={() => setIsLogin(true)}
+                  >
                     Sign in
                   </Button>
                 </p>
@@ -129,5 +150,5 @@ export default function AuthPage() {
         </Card>
       </main>
     </div>
-  )
+  );
 }
