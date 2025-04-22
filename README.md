@@ -10,9 +10,23 @@
 
 ## Introduction
 
-An AI-driven platform that cuts through the noise, bias, and bloat of traditional media by extracting core news from web scraping, trusted APIs, and real-time community sources like Reddit. The system strips filler content, rewrites news and community posts into clear, professional-grade articles using advanced AI models.
+DistillNews is an automated news website made using multi-agents with the simple goal in mind - to surf the internet and find every possible news.
 
-By combining structured extraction (via Julep AI), community-driven discovery, and smart personalization, we empower communities with direct access to reliable local and global updates—without clickbait, corporate spin, or media gatekeeping. This approach also enables underrepresented voices on social platforms to reach a wider audience through well-written, structured articles.
+### The Problem 
+News articles written by media channels can not cover everything due to a bias towards profit and limited workforce. 
+
+While the internet is packed with all sorts of news all over the place on different platforms with no unified platform where one can find all the news, something might be posted on Reddit or X, it is impossible to follow the fast-paced nature of the internet.
+
+This is where our goal comes in - using AI agents to find news from data all over the web from news articles to community posts and present them in a structured, personalized, and timely manner for engagement.
+
+### Our Solution 
+An AI-driven platform that cuts through the noise, bias, and bloat of traditional media by extracting core news from web scraping, trusted APIs, and real-time community sources like Reddit. 
+
+The system both strips filler content found in news articles, and as well as rewrites news and community posts into clear, professional-grade articles using Julep AI.
+
+By combining structured extraction (via Julep AI), community-driven discovery, and smart personalization, we empower communities with direct access to reliable local and global updates—without clickbait, corporate spin, or media gatekeeping. 
+
+This approach also enables underrepresented voices on social platforms to reach a wider audience through well-written, structured articles.
 
 ## Demo Video Link:
   <a href="https://www.youtube.com/watch?v=eo0V70rcz4Q">Demo link</a>
