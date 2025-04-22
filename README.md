@@ -45,7 +45,7 @@ Classifies input data as news or not. Extracts structured content (title, summar
 **Clean UI**: Minimalist, responsive interface with login and onboarding flow.
 
 ### Demo Video Link:
-  <a href="https://www.youtube.com/watch?v=eo0V70rcz4Q">Demo link</a>
+  <a href="https://youtu.be/DAjnclylWJI?si=9GWWL3lOncghZvmW">Demo link</a>
   
 ### Presentation Link:
   <a href="https://www.canva.com/design/DAGlJFoPnyo/65fJrZEw6t2cch7ZaEOyfQ/edit?utm_content=DAGlJFoPnyo&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton"> PPT link here </a>
