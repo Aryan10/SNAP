@@ -1,16 +1,16 @@
-<h1 align="center">Distillnews : AI-Powered Community News Website</h1>
+<h1 align="center">Distill News : AI-Powered Community News Website</h1>
 <p align="center">
 </p>
 
 <a href="https://hack36.in"> <img src="https://postimage.me/images/2025/04/19/built-at-hack36.png" height=24px> </a>
 
-## Theme : Community and Upliftment
+### Hack36 Theme : Community and Upliftment
 
-## Applicable Tracks : Julep AI
+### Applicable Tracks : Julep AI
 
 ## Introduction
 
-DistillNews is an automated news website made using multi-agents with the simple goal in mind - to surf the internet and find every possible news.
+Distill News is an automated news website made using multi-agents with the simple goal in mind - to surf the internet and find every possible news.
 
 ### The Problem 
 News articles written by media channels can not cover everything due to a bias towards profit and limited workforce. 
@@ -22,16 +22,32 @@ This is where our goal comes in - using AI agents to find news from data all ove
 ### Our Solution 
 An AI-driven platform that cuts through the noise, bias, and bloat of traditional media by extracting core news from web scraping, trusted APIs, and real-time community sources like Reddit. 
 
-The system both strips filler content found in news articles, and as well as rewrites news and community posts into clear, professional-grade articles using Julep AI.
+The system strips clickbait and filler content found in news articles, and as well as rewrites news and community posts into clear, professional-grade articles using Julep AI.
 
 By combining structured extraction (via Julep AI), community-driven discovery, and smart personalization, we empower communities with direct access to reliable local and global updates—without clickbait, corporate spin, or media gatekeeping. 
 
 This approach also enables underrepresented voices on social platforms to reach a wider audience through well-written, structured articles.
 
-## Demo Video Link:
+### Key Features:
+
+**AI-Generated News Feed:** Aggregates content from APIs (GNews, MediaStack, RapidAPI) and community platforms like Reddit.
+
+**Noise Filtering:** Removes clickbait, ads, duplicates, and irrelevant content automatically.
+
+**Multi-Agent Article Processing (via Julep AI):**
+
+Classifies input data as news or not. Extracts structured content (title, summary, date, location). Formats it into clean, professional markdown
+
+**Personalized Feed:** Learns from your reading time and interests. Dynamically adapts story selection using topic-weighted preferences
+
+**RAG-based AI Assistant:** Includes article context automatically. Supports session memory for follow-ups. Handles both local and global queries conversationally.
+
+**Clean UI**: Minimalist, responsive interface with login and onboarding flow.
+
+### Demo Video Link:
   <a href="https://www.youtube.com/watch?v=eo0V70rcz4Q">Demo link</a>
   
-## Presentation Link:
+### Presentation Link:
   <a href="https://www.canva.com/design/DAGlJFoPnyo/65fJrZEw6t2cch7ZaEOyfQ/edit?utm_content=DAGlJFoPnyo&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton"> PPT link here </a>
 
 ## Technology Stack:
@@ -56,7 +72,7 @@ We want to build an AI-driven platform to:
 - **Rewrite** articles and community posts into concise, professional-grade news.
 - **Personalize** delivery based on interests, reading behavior, and location.
 
-## Key Features 🌟
+## Wow Factors 🌟
 
 1. **Concise Rewriting**
    - Removes filler, ads, and fluff.
